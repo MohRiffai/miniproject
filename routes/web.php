@@ -24,8 +24,8 @@ route ::get(uri: '/', action: \App\Http\Controllers\HomeController::class)->name
 route ::get(uri: 'articles', action: [\App\Http\Controllers\ArticleController::class, 'index'])->name(name:'articles.index');
 
 Route::middleware('auth')->group(function () {
-    route ::get(uri: 'dashboard', action: \App\Http\Controllers\DashboardController::class)->name(name:'dashboard');
-    route:: resource(name: 'users', controller: \App\Http\Controllers\UserController::class);
+    route::get(uri: 'dashboard', action: \App\Http\Controllers\DashboardController::class)->name(name:'dashboard');
+    route::resource(name: 'users', controller: \App\Http\Controllers\UserController::class);
     route::resource(name: 'categories', controller: \App\Http\Controllers\CategoryController::class);
     route::resource(name: 'tags', controller: \App\Http\Controllers\TagController::class);
    
