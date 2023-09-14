@@ -46,7 +46,7 @@
                     <td>{{ $item->email }}</td>
                     {{-- <td>{{ $item->role }}</td> --}}
                     <td>
-                        <a href='' class="btn btn-warning btn-sm">Edit</a>
+                        <a href='{{ url('users/'.$item->id.'/edit') }}' class="btn btn-warning btn-sm">Edit</a>
                         <form onsubmit="return confirm('Are you sure to delete this data?')" class='d-inline' action="{{ url('users/'.$item->id) }}" method="post">
                             @csrf
                             @method('DELETE')

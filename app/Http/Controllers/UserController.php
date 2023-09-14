@@ -13,14 +13,14 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $keywords = $request->keywords;
-        $inline =3;
-        if(strlen($keywords)){
-            $data = user::where('id','like',"%$keywords%")
-                ->orWhere('name','like',"%$keywords%")
-                ->orWhere('email','like',"%$keywords%")
+        $inline = 3;
+        if (strlen($keywords)) {
+            $data = user::where('id', 'like', "%$keywords%")
+                ->orWhere('name', 'like', "%$keywords%")
+                ->orWhere('email', 'like', "%$keywords%")
                 ->paginate($inline);
-        }else{
-        $data = user::orderBy('name', 'desc')->paginate($inline);
+        } else {
+            $data = user::orderBy('name', 'desc')->paginate($inline);
         }
         return view(view: 'users.index')->with('data', $data);
     }
@@ -63,33 +63,40 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
+    // public function edit(User $user)
+    // {
+    //     $data = user::where('id', $user)->first();
+    //     return view('users.edit')->with('data', $data);
+    // }
+
     public function edit(User $user)
     {
-        $data = user::where('id', $user)->first();
+        $data = User::find($user->id); // Use $user->id to access the user's ID
         return view('users.edit')->with('data', $data);
-        // return 'HI '. $user;
     }
+
 
     /**
      * Update the specified resource in storage.
      */
     public function update(Request $request, User $user)
     {
-        // $request->validate([
-        //     'name' => 'required',
-        //     'email' => 'required',
-        //     'password' => 'required',
-        //     'role' => 'required',
-        // ]);
-        // $data = [
-        //     'name' => $request->name,
-        //     'email' => $request->email,
-        //     'password' => $request->password,
-        //     'role' => $request->role,
-        // ];
-        // User::where('id', $user)->update($data);
-        // return redirect()->to('users')->with('success', 'Successfully update data');
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email', // You can add email validation here
+            'password' => 'required|min:8', // Add password validation rules here
+        ]);
+
+        // Update user data
+        $user->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => bcrypt($request->password), // Hash the password before updating
+        ]);
+
+        return redirect()->route('users.index')->with('success', 'Successfully updated data');
     }
+
 
     /**
      * Remove the specified resource from storage.
