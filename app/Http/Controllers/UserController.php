@@ -84,14 +84,22 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required|email', // You can add email validation here
-            'password' => 'required|min:8', // Add password validation rules here
+            // 'password' => 'min:8', // Add password validation rules here
+
         ]);
 
+        if($request->password == ""){
+            $password = $user->password;
+        }else{
+            $password = bcrypt($request->password);
+        }
+
+        // dd($user->id);
         // Update user data
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => bcrypt($request->password), // Hash the password before updating
+            'password' => $password, // Hash the password before updating
         ]);
 
         return redirect()->route('users.index')->with('success', 'Successfully updated data');

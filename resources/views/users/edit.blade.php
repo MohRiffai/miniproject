@@ -1,6 +1,6 @@
 @section('header')
     <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-        {{ __('Create a User') }}
+        {{ __('Edit a User') }}
     </h2>
 @endsection
 @extends('layouts.templatecss')
@@ -27,6 +27,7 @@
                 <label for="password" class="col-sm-2 col-form-label">Password</label>
                 <div class="col-sm-10">
                     <input type="password" class="form-control" name="password" placeholder="Enter new password" id="password">
+                    <p>kosongkan bial password tidak diganti</p>
                 </div>
             </div>            
             <div class="mb-3 row">
