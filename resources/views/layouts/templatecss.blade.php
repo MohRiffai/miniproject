@@ -12,7 +12,7 @@
             integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
     </head>
 
-    <body class="bg-light">
+    <body class="bg-dark">
         <main class="container">
             @include('components.message')
             @yield('content')
