@@ -46,7 +46,7 @@ class UserController extends Controller
         $data = [
             'name' => $request->name,
             'email' => $request->email,
-            'password' => $request->password
+            'password' => bcrypt($request->password)
         ];
         User::create($data);
         return redirect()->to('users')->with('success', 'Successfully added data');
