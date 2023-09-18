@@ -27,7 +27,7 @@
                 <label for="password" class="col-sm-2 col-form-label">Password</label>
                 <div class="col-sm-10">
                     <input type="password" class="form-control" name="password" placeholder="Enter new password" id="password">
-                    <p>kosongkan bial password tidak diganti</p>
+                    <p style="color:red; font-size:14px; font-style:italic ">(Kosongkan bila password tidak diganti)</p>
                 </div>
             </div>            
             <div class="mb-3 row">
