@@ -21,14 +21,15 @@ use App\Http\Controllers\DashboardController;
 */
 
 route ::get(uri: '/', action: \App\Http\Controllers\HomeController::class)->name(name:'home');
-route ::get(uri: 'articles', action: [\App\Http\Controllers\ArticleController::class, 'index'])->name(name:'articles.index');
+// route ::get(uri: 'articles', action: [\App\Http\Controllers\ArticleController::class, 'index'])->name(name:'articles.index');
 
 Route::middleware('auth')->group(function () {
     route::get(uri: 'dashboard', action: \App\Http\Controllers\DashboardController::class)->name(name:'dashboard');
     route::resource(name: 'users', controller: \App\Http\Controllers\UserController::class);
     route::resource(name: 'categories', controller: \App\Http\Controllers\CategoryController::class);
     route::resource(name: 'tags', controller: \App\Http\Controllers\TagController::class);
-   
+    route::resource(name: 'articles', controller: \App\Http\Controllers\ArticleController::class);
+    
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
