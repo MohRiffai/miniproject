@@ -31,9 +31,10 @@
             <thead>
                 <tr>
                     <th class="col-md-1">No</th>
-                    <th class="col-md-4">Name</th>
-                    <th class="col-md-4">E-mail</th>
+                    <th class="col-md-2">Name</th>
+                    <th class="col-md-3">E-mail</th>
                     {{-- <th class="col-md-2">Role</th> --}}
+                    <th class="col-md-3">Phone</th>
                     <th class="col-md-2">Action</th>
                 </tr>
             </thead>
@@ -45,8 +46,9 @@
                     <td>{{ $item->name }}</td>
                     <td>{{ $item->email }}</td>
                     {{-- <td>{{ $item->role }}</td> --}}
+                    <td>{{ $item->phone }}</td>
                     <td>
-                        <a href='{{ url('users/'.$item->id.'/edit') }}' class="btn btn-warning btn-sm">Edit</a>
+                        <a href='{{ url('users/'.$item->name.'/edit') }}' class="btn btn-warning btn-sm">Edit</a>
                         <form onsubmit="return confirm('Are you sure to delete this data?')" class='d-inline' action="{{ url('users/'.$item->id) }}" method="post">
                             @csrf
                             @method('DELETE')

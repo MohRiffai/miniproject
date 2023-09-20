@@ -20,7 +20,7 @@ class TagController extends Controller
                 ->orWhere('description', 'like', "%$keywords%")
                 ->paginate($inline);
         } else {
-            $data = tag::orderBy('name', 'desc')->paginate($inline);
+            $data = tag::orderBy('id', 'desc')->paginate($inline);
         }
         return view(view: 'tags.index')->with('data', $data);
     }

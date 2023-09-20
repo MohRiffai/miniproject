@@ -7,7 +7,7 @@
 @section('content')
     <!-- START FORM -->
     <a href="{{ url('tags') }}" class="my-3 btn btn-secondary"><< Back</a>
-    <form action='{{ url('tags/'.$data->id) }}' method='post'>
+    <form action='{{ url('tags/'.$data->name) }}' method='post'>
         @csrf
         @method('PUT')
         <div class="my-3 p-3 bg-body rounded shadow-sm">

@@ -17,7 +17,7 @@ class CategoryController extends Controller
                 ->orWhere('description', 'like', "%$keywords%")
                 ->paginate($inline);
         } else {
-            $data = category::orderBy('name', 'desc')->paginate($inline);
+            $data = category::orderBy('id', 'desc')->paginate($inline);
         }
         return view(view: 'categories.index')->with('data', $data);
     }

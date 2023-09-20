@@ -27,7 +27,6 @@
                     <th class="col-md-1">No</th>
                     <th class="col-md-4">Name</th>
                     <th class="col-md-4">Description</th>
-                    {{-- <th class="col-md-2">Role</th> --}}
                     <th class="col-md-2">Action</th>
                 </tr>
             </thead>
@@ -38,9 +37,8 @@
                     <td><?php echo $i?></td>
                     <td>{{ $item->name }}</td>
                     <td>{{ $item->description }}</td>
-                    {{-- <td>{{ $item->role }}</td> --}}
                     <td>
-                        <a href='{{ url('tags/'.$item->id.'/edit') }}' class="btn btn-warning btn-sm">Edit</a>
+                        <a href='{{ url('tags/'.$item->name.'/edit') }}' class="btn btn-warning btn-sm">Edit</a>
                         <form onsubmit="return confirm('Are you sure to delete this data?')" class='d-inline' action="{{ url('tags/'.$item->id) }}" method="post">
                             @csrf
                             @method('DELETE')

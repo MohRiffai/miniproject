@@ -40,7 +40,7 @@
                     <td>{{ $item->description }}</td>
                     {{-- <td>{{ $item->role }}</td> --}}
                     <td>
-                        <a href='{{ url('categories/'.$item->id.'/edit') }}' class="btn btn-warning btn-sm">Edit</a>
+                        <a href='{{ url('categories/'.$item->name.'/edit') }}' class="btn btn-warning btn-sm">Edit</a>
                         <form onsubmit="return confirm('Are you sure to delete this data?')" class='d-inline' action="{{ url('categories/'.$item->id) }}" method="post">
                             @csrf
                             @method('DELETE')

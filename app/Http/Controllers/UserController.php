@@ -18,9 +18,10 @@ class UserController extends Controller
             $data = user::where('id', 'like', "%$keywords%")
                 ->orWhere('name', 'like', "%$keywords%")
                 ->orWhere('email', 'like', "%$keywords%")
+                ->orWhere('phone', 'like', "%$keywords%")
                 ->paginate($inline);
         } else {
-            $data = user::orderBy('name', 'desc')->paginate($inline);
+            $data = user::orderBy('id', 'desc')->paginate($inline);
         }
         return view(view: 'users.index')->with('data', $data);
     }
@@ -41,11 +42,13 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required',
+            'phone' => 'required',
             'password' => 'required',
         ]);
         $data = [
             'name' => $request->name,
             'email' => $request->email,
+            'phone' => $request->phone,
             'password' => bcrypt($request->password)
         ];
         User::create($data);
@@ -85,6 +88,7 @@ class UserController extends Controller
             'name' => 'required',
             'email' => 'required|email', // You can add email validation here
             // 'password' => 'min:8', // Add password validation rules here
+            'phone' => 'required',
 
         ]);
 
@@ -99,6 +103,7 @@ class UserController extends Controller
         $user->update([
             'name' => $request->name,
             'email' => $request->email,
+            'phone' => $request->phone,
             'password' => $password, // Hash the password before updating
         ]);
 

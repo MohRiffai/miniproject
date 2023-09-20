@@ -10,4 +10,8 @@ class Tag extends Model
     use HasFactory;
     protected $fillable = ['name','description'];
     protected $table = 'tags';
+
+    public function getRouteKeyName(){
+        return 'name';
+    }
 }
