@@ -37,20 +37,27 @@ class UserController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, User $user)
     {
         $request->validate([
             'name' => 'required',
             'email' => 'required',
-            'phone' => 'required',
             'password' => 'required',
         ]);
+
+        if($request->phone == ""){
+            $phone = $user->phone;
+        }else{
+            $phone = $request->phone;
+        }
+
         $data = [
             'name' => $request->name,
             'email' => $request->email,
             'phone' => $request->phone,
             'password' => bcrypt($request->password)
         ];
+
         User::create($data);
         return redirect()->to('users')->with('success', 'Successfully added data');
     }

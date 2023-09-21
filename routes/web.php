@@ -28,6 +28,7 @@ Route::middleware('auth')->group(function () {
     route::resource(name: 'users', controller: \App\Http\Controllers\UserController::class);
     route::resource(name: 'categories', controller: \App\Http\Controllers\CategoryController::class);
     route::resource(name: 'tags', controller: \App\Http\Controllers\TagController::class);
+    route::get('/articles/article/checkSlug', [ArticleController::class, 'checkSlug']);
     route::resource(name: 'articles', controller: \App\Http\Controllers\ArticleController::class);
     
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

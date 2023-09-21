@@ -20,14 +20,14 @@
                             {{ __('Users') }}
                         </x-nav-link>
 
-                        <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.index')">
+                        <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
                             {{ __('Categories') }}
                         </x-nav-link>
 
-                        <x-nav-link :href="route('tags.index')" :active="request()->routeIs('tags.index')">
+                        <x-nav-link :href="route('tags.index')" :active="request()->routeIs('tags.*')">
                             {{ __('Tags') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('articles.index')" :active="request()->routeIs('articles.index')">
+                        <x-nav-link :href="route('articles.index')" :active="request()->routeIs('articles.*')">
                             {{ __('Articles') }}
                         </x-nav-link>
                     @endauth

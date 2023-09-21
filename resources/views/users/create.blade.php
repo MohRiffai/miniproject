@@ -7,6 +7,7 @@
 @section('content')
     <!-- START FORM -->
     <a href="{{ url('users') }}" class="my-3 btn btn-secondary"><< Back</a>
+    <div class="col-lg-8">
     <form action='{{ url('users') }}' method='post'>
         @csrf
         <div class="my-3 p-3 bg-body rounded shadow-sm">
@@ -40,5 +41,6 @@
                 </div>
             </div>
     </form>
+    <</div>
     <!-- AKHIR FORM -->
 @endsection
