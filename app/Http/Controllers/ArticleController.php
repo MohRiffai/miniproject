@@ -39,14 +39,12 @@ class ArticleController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => 'required',
-            'description' => 'required',
+        $data= $request->validate([
+            'tittle' => 'required|max:255',
+            'slug' => 'required|unique:articles',
+            'category_id' => 'required',
+            'content' => 'required',
         ]);
-        $data = [
-            'name' => $request->name,
-            'description' => $request->description,
-        ];
         article::create($data);
         return redirect()->to('articles')->with('success', 'Successfully added data');
     }
@@ -64,28 +62,35 @@ class ArticleController extends Controller
      */
     public function edit(article $article)
     {
-        $data = article::find($article->id); // Use $article->id to access the article's ID
-        return view('articles.edit')->with('data', $data);
+        $data = article::find($article->id); 
+        return view('articles.edit',[
+            'categories' => Category::all()
+        ])->with('data', $data);
     }
 
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, article $article)
-    {
-        $request->validate([
-            'name' => 'required',
-            'description' => 'required', // You can add email validation here
-        ]);
-        // Update article data
-        $article->update([
-            'name' => $request->name,
-            'description' => $request->description,
-        ]);
+    public function update(Request $request, Article $article)
+{
+    $request->validate([
+        'tittle' => 'required|max:255',
+        'slug' => 'required|unique:articles,slug,' . $article->id,
+        'category_id' => 'required',
+        'content' => 'required',
+    ]);
 
-        return redirect()->route('articles.index')->with('success', 'Successfully updated data');
-    }
+    $article->update([
+        'tittle' => $request->input('tittle'),
+        'slug' => $request->input('slug'),
+        'category_id' => $request->input('category_id'),
+        'content' => $request->input('content'),
+    ]);
+
+    return redirect()->route('articles.index')->with('success', 'Successfully updated data');
+}
+
 
 
     /**

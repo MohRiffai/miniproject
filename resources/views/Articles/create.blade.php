@@ -3,24 +3,46 @@
         {{ __('Create new article') }}
     </h2>
 @endsection
-@extends('layouts.templatecss')
+@extends('layouts.articlecss')
 @section('content')
     <!-- START FORM -->
     <a href="{{ url('articles') }}" class="my-3 btn btn-secondary"><< Back</a>
     <div class="col-lg-8">
-        <form action='{{ url('aritcles') }}' method='post'>
+    <head>
+    {{-- Trix Editor --}}
+        <link rel="stylesheet" type="text/css" href="https://unpkg.com/trix@2.0.0/dist/trix.css">
+        <script type="text/javascript" src="https://unpkg.com/trix@2.0.0/dist/trix.umd.min.js"></script>
+
+    {{-- Non aktifkan fitur upload file pada Trix Editor  --}}
+        <style>
+            trix-toolbar [data-trix-button-group="file-tools"] {
+                display:none;
+            }
+        </style>
+    </head>
+        <form action='{{ url('articles') }}' method='post'>
             @csrf
             <div class="my-3 p-3 bg-body rounded shadow-sm">
                 <div class="mb-3 row">
                     <label for="tittle" class="col-sm-2 col-form-label">Tittle</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" name='tittle' id="tittle">
+                        <input type="text" class="form-control @error('tittle') is-invalid @enderror" name='tittle' id="tittle" value="{{ old('tittle') }}">
+                        @error('tittle')
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
+                        @enderror
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label for="slug" class="col-sm-2 col-form-label">Slug</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" name='slug' id="slug">
+                        <input type="text" class="form-control @error('slug') is-invalid @enderror" name='slug' id="slug" value="{{ old('slug') }}">
+                        @error('slug')
+                        <div class="invalid-feedback">
+                            {{ $message }}
+                        </div>
+                        @enderror
                     </div>
                 </div>
                 <div class="mb-3 row">
@@ -28,7 +50,11 @@
                     <div class="col-sm-10">
                         <select class="form-select" name="category_id" id="">
                             @foreach ($categories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                @if(old('category_id') == $category->id) 
+                                    <option value="{{ $category->id }}" selected>{{ $category->name }}</option>
+                                @else
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                @endif
                             @endforeach
                         </select>
                     </div>
@@ -36,7 +62,11 @@
                 <div class="mb-3 row">
                     <label for="content" class="col-sm-2 col-form-label">Content</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" name='content' id="content">
+                        @error('content')
+                            <p class="text-danger">{{ $message }}</p>
+                        @enderror
+                            <input id="content" type="hidden" name="content" value="{{ old('body') }}">
+                            <trix-editor input="content"></trix-editor>
                     </div>
                 </div>
                 <div class="mb-3 row">
@@ -56,5 +86,10 @@
             .then(response => response.json())
             .then(data => slug.value = data.slug)
     });
+
+// {{-- Non aktifkan fitur upload file pada Trix Editor  --}}
+document.addEventListener('trix-file-accept', function(e){
+    e.preventDefault();
+})
 </script>
 @endsection

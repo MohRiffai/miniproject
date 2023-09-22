@@ -4,8 +4,13 @@
     </h2>
 @endsection
 <!-- START DATA -->
-@extends('layouts.templatecss')
+@extends('layouts.articlecss')
 @section('content')
+@if(session()->has('success'))
+    <div class='alert alert-success' role='alert'>
+        {{ session('success') }}
+    </div>
+@endif
     <div class="my-3 p-3 bg-body rounded shadow-sm">
         <!-- FORM PENCARIAN -->
         <div class="pb-3">
@@ -26,7 +31,7 @@
                 <tr>
                     <th class="col-md-1">No</th>
                     <th class="col-md-4">Tittle</th>
-                    <th class="col-md-4">Content</th>
+                    <th class="col-md-4">Category</th>
                     {{-- <th class="col-md-2">Role</th> --}}
                     <th class="col-md-2">Action</th>
                 </tr>
@@ -36,11 +41,11 @@
                 @foreach ($data as $item)
                 <tr>
                     <td><?php echo $i?></td>
-                    <td>{{ $item->name }}</td>
-                    <td>{{ $item->description }}</td>
+                    <td>{{ $item->tittle }}</td>
+                    <td>{{ $item->category->name}}</td>
                     {{-- <td>{{ $item->role }}</td> --}}
                     <td>
-                        <a href='{{ url('articles/'.$item->tittle.'/edit') }}' class="btn btn-warning btn-sm">Edit</a>
+                        <a href='{{ url('articles/'.$item->slug.'/edit') }}' class="btn btn-warning btn-sm">Edit</a>
                         <form onsubmit="return confirm('Are you sure to delete this data?')" class='d-inline' action="{{ url('articles/'.$item->id) }}" method="post">
                             @csrf
                             @method('DELETE')
