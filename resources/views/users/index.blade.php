@@ -49,7 +49,7 @@
                     <td>{{ $item->phone }}</td>
                     <td>
                         <a href='{{ url('users/'.$item->name.'/edit') }}' class="btn btn-warning btn-sm">Edit</a>
-                        <form onsubmit="return confirm('Are you sure to delete this data?')" class='d-inline' action="{{ url('users/'.$item->id) }}" method="post">
+                        <form onsubmit="return confirm('Are you sure to delete this data?')" class='d-inline' action="{{ url('users/'.$item->name) }}" method="post">
                             @csrf
                             @method('DELETE')
                             <button type="submit" name="submit" class="btn btn-danger btn-sm">Del</button>

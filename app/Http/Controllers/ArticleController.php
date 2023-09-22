@@ -15,8 +15,9 @@ class ArticleController extends Controller
         $inline = 3;
         if (strlen($keywords)) {
             $data = article::where('id', 'like', "%$keywords%")
-                ->orWhere('name', 'like', "%$keywords%")
-                ->orWhere('description', 'like', "%$keywords%")
+                ->orWhere('tittle', 'like', "%$keywords%")
+                ->orWhere('category_name', 'like', "%$keywords%")
+                ->orWhere('slug', 'like', "%$keywords%")
                 ->paginate($inline);
         } else {
             $data = article::orderBy('id', 'desc')->paginate($inline);
@@ -39,10 +40,10 @@ class ArticleController extends Controller
      */
     public function store(Request $request)
     {
-        $data= $request->validate([
+        $data = $request->validate([
             'tittle' => 'required|max:255',
             'slug' => 'required|unique:articles',
-            'category_id' => 'required',
+            'category_name' => 'required',
             'content' => 'required',
         ]);
         article::create($data);
@@ -62,8 +63,8 @@ class ArticleController extends Controller
      */
     public function edit(article $article)
     {
-        $data = article::find($article->id); 
-        return view('articles.edit',[
+        $data = article::find($article->id);
+        return view('articles.edit', [
             'categories' => Category::all()
         ])->with('data', $data);
     }
@@ -73,23 +74,23 @@ class ArticleController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, Article $article)
-{
-    $request->validate([
-        'tittle' => 'required|max:255',
-        'slug' => 'required|unique:articles,slug,' . $article->id,
-        'category_id' => 'required',
-        'content' => 'required',
-    ]);
+    {
+        $request->validate([
+            'tittle' => 'required|max:255',
+            'slug' => 'required|unique:articles,slug,' . $article->id,
+            'category_name' => 'required',
+            'content' => 'required',
+        ]);
 
-    $article->update([
-        'tittle' => $request->input('tittle'),
-        'slug' => $request->input('slug'),
-        'category_id' => $request->input('category_id'),
-        'content' => $request->input('content'),
-    ]);
+        $article->update([
+            'tittle' => $request->input('tittle'),
+            'slug' => $request->input('slug'),
+            'category_name' => $request->input('category_name'),
+            'content' => $request->input('content'),
+        ]);
 
-    return redirect()->route('articles.index')->with('success', 'Successfully updated data');
-}
+        return redirect()->route('articles.index')->with('success', 'Successfully updated data');
+    }
 
 
 
@@ -97,12 +98,25 @@ class ArticleController extends Controller
      * Remove the specified resource from storage.
      */
 
-    public function destroy(article $article)
+    // public function destroy(article $article)
+    // {
+    //     $article->delete(); // Use the $article instance to delete the article.
+
+    //     return redirect()->to('articles')->with('success', 'Successfully deleted data');
+    // }
+    public function destroy($slug)
     {
-        $article->delete(); // Use the $article instance to delete the article.
+        $article = Article::where('slug', $slug)->first();
+
+        if (!$article) {
+            return redirect()->to('articles')->with('error', 'Article not found');
+        }
+
+        $article->delete();
 
         return redirect()->to('articles')->with('success', 'Successfully deleted data');
     }
+
 
     public function checkSlug(Request $request)
     {

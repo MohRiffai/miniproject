@@ -69,10 +69,10 @@
                         <div class="mb-3 row">
                             <label for="category" class="col-sm-2 col-form-label">Category</label>
                             <div class="col-sm-10">
-                                <select class="form-select" name="category_id" id="">
+                                <select class="form-select" name="category_name" id="">
                                     @isset($categories)
                                         @foreach ($categories as $category)
-                                            <option value="{{ $category->id }}" {{ (old('category_id', $data->category_id) == $category->id) ? 'selected' : '' }}>
+                                            <option value="{{ $category->name }}" {{ (old('category_name', $data->category_name) === $category->name) ? 'selected' : '' }}>
                                                 {{ $category->name }}
                                             </option>
                                         @endforeach

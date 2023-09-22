@@ -39,7 +39,7 @@
                     <td>{{ $item->description }}</td>
                     <td>
                         <a href='{{ url('tags/'.$item->name.'/edit') }}' class="btn btn-warning btn-sm">Edit</a>
-                        <form onsubmit="return confirm('Are you sure to delete this data?')" class='d-inline' action="{{ url('tags/'.$item->id) }}" method="post">
+                        <form onsubmit="return confirm('Are you sure to delete this data?')" class='d-inline' action="{{ url('tags/'.$item->name) }}" method="post">
                             @csrf
                             @method('DELETE')
                             <button type="submit" name="submit" class="btn btn-danger btn-sm">Del</button>

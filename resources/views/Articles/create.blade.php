@@ -48,12 +48,12 @@
                 <div class="mb-3 row">
                     <label for="category" class="col-sm-2 col-form-label">Category</label>
                     <div class="col-sm-10">
-                        <select class="form-select" name="category_id" id="">
+                        <select class="form-select" name="category_name" id="">
                             @foreach ($categories as $category)
-                                @if(old('category_id') == $category->id) 
-                                    <option value="{{ $category->id }}" selected>{{ $category->name }}</option>
+                                @if(old('category_name') === $category->name) 
+                                    <option value="{{ $category->name }}" selected>{{ $category->name }}</option>
                                 @else
-                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                    <option value="{{ $category->name }}">{{ $category->name }}</option>
                                 @endif
                             @endforeach
                         </select>

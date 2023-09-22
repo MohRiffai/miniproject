@@ -10,7 +10,7 @@ class Article extends Model
 {
     use HasFactory;
     use Sluggable;
-    protected $fillable = ['tittle','slug', 'category_id', 'content'];
+    protected $fillable = ['tittle','slug', 'category_name', 'content'];
 
     public function category()
     {

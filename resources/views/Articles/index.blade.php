@@ -14,7 +14,7 @@
     <div class="my-3 p-3 bg-body rounded shadow-sm">
         <!-- FORM PENCARIAN -->
         <div class="pb-3">
-            <form class="d-flex" action="{{ url('aritcles') }}" method="get">
+            <form class="d-flex" action="{{ url('articles') }}" method="get">
                 <input class="form-control me-1" type="search" name="keywords" value="{{ Request::get('keywords') }}"
                     placeholder="Enter keywords" aria-label="Search">
                 <button class="btn btn-secondary" type="submit">Serach</button>
@@ -42,11 +42,11 @@
                 <tr>
                     <td><?php echo $i?></td>
                     <td>{{ $item->tittle }}</td>
-                    <td>{{ $item->category->name}}</td>
+                    <td>{{ $item->category_name}}</td>
                     {{-- <td>{{ $item->role }}</td> --}}
                     <td>
                         <a href='{{ url('articles/'.$item->slug.'/edit') }}' class="btn btn-warning btn-sm">Edit</a>
-                        <form onsubmit="return confirm('Are you sure to delete this data?')" class='d-inline' action="{{ url('articles/'.$item->id) }}" method="post">
+                        <form onsubmit="return confirm('Are you sure to delete this data?')" class='d-inline' action="{{ url('articles/'.$item->slug) }}" method="post">
                             @csrf
                             @method('DELETE')
                             <button type="submit" name="submit" class="btn btn-danger btn-sm">Del</button>
