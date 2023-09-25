@@ -11,6 +11,10 @@ class Tag extends Model
     protected $fillable = ['name','description'];
     protected $table = 'tags';
 
+    public function article(){
+        return $this->belongsToMany(Article::class);
+    }
+
     public function getRouteKeyName(){
         return 'name';
     }

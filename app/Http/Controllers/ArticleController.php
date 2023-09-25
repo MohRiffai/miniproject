@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Article;
 use App\Models\Category;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 use \Cviebrock\EloquentSluggable\Services\SlugService;
 
@@ -32,7 +33,7 @@ class ArticleController extends Controller
     {
         return view('articles.create', [
             'categories' => Category::all()
-        ]);
+        ], ['tags' => Tag::all()]);
     }
 
     /**
@@ -45,7 +46,14 @@ class ArticleController extends Controller
             'slug' => 'required|unique:articles',
             'category_name' => 'required',
             'content' => 'required',
+            'tag_id' => 'required|array',
         ]);
+
+        $setTagIdAsString = implode(',', $data['tag_id']);
+
+        // Modify the 'tag_id' value in the $data array
+        $data['tag_id'] = $setTagIdAsString;
+
         article::create($data);
         return redirect()->to('articles')->with('success', 'Successfully added data');
     }
@@ -61,14 +69,23 @@ class ArticleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(article $article)
+    public function edit(Article $article)
     {
+        // dd($article);
         $data = article::find($article->id);
         return view('articles.edit', [
             'categories' => Category::all()
-        ])->with('data', $data);
+        ], ['tags' => Tag::all()])->with('data', $data);
     }
 
+    // public function edit(Article $article)
+    // {
+    //     $data = Article::find($article->id);
+    //     $categories = Category::all();
+    //     $tags = Tag::all();
+
+    //     return view('articles.edit', compact('article', 'categories', 'tags', 'data'));
+    // }
 
     /**
      * Update the specified resource in storage.
@@ -80,13 +97,17 @@ class ArticleController extends Controller
             'slug' => 'required|unique:articles,slug,' . $article->id,
             'category_name' => 'required',
             'content' => 'required',
+            'tag_id' => 'required|array',
         ]);
+
+        $setTagIdAsString = implode(',', $request->input('tag_id'));
 
         $article->update([
             'tittle' => $request->input('tittle'),
             'slug' => $request->input('slug'),
             'category_name' => $request->input('category_name'),
             'content' => $request->input('content'),
+            'tag_id' => $setTagIdAsString,
         ]);
 
         return redirect()->route('articles.index')->with('success', 'Successfully updated data');

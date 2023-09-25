@@ -21,6 +21,7 @@
                             display: none;
                         }
                     </style>
+                    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
                 </head>
                 <form action='{{ url('articles/' . $data->slug) }}' method='post'>
                     @csrf
@@ -50,22 +51,6 @@
                                 @enderror
                             </div>
                         </div>
-                        {{-- <div class="mb-3 row">
-                            <label for="category" class="col-sm-2 col-form-label">Category</label>
-                            <div class="col-sm-10">
-                                <select class="form-select"name="category_id" id="">
-                                    @isset($categories)
-                                        @foreach ($categories as $category)
-                                            @if (old('category_id') == $category->id)
-                                                <option value="{{ $category->id }}" selected>{{ $category->name }}</option>
-                                            @else
-                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                            @endif
-                                        @endforeach
-                                    @endisset
-                                </select>
-                            </div>
-                        </div> --}}
                         <div class="mb-3 row">
                             <label for="category" class="col-sm-2 col-form-label">Category</label>
                             <div class="col-sm-10">
@@ -88,13 +73,37 @@
                                     <p class="text-danger">{{ $message }}</p>
                                 @enderror
                                 <input id="content" type="hidden" name="content" value="{{ $data->content }}"
-                                    value="{{ old('body') }}">
+                                    value="{{ old('content') }}">
                                 <trix-editor input="content"></trix-editor>
                             </div>
                         </div>
+                        {{-- <div class="mb-3 row">
+                            <label for="tag" class="col-sm-2 col-form-label">Tags</label>
+                            <div class="col-sm-10">
+                                <select class="form-select" name="tag_id[]" multiple="multiple" id="tag_id">
+                                    @foreach ($tags as $tag)
+                                        <option value="{{ $tag->id }}" {{ is_array(old('tag_id')) && in_array($tag->id, old('tag_id')) ? 'selected' : '' }}>
+                                            {{ $tag->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>                         --}}
+                        <div class="mb-3 row">
+                            <label for="tag" class="col-sm-2 col-form-label">Tags</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" name="tag_id[]" multiple="multiple" id="tag_id">
+                                    @foreach ($tags as $tag)
+                                    {{-- <option {{ isset($article) && $article->tag()->find($tag->id) ? 'selected' : '' }} value="{{ $tag->id }}">{{ $tag->name }}</option>     --}}
+                                    <option {{ $article->tag()->find($tag->id) ? 'selected' : '' }} value="{{ $tag->id }}">{{ $tag->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        
                         <div class="mb-3 row">
                             <label for="save" class="col-sm-2 col-form-label"></label>
-                            <div class="col-sm-10"><button type="submit" class="btn btn-primary" name="submit">Create
+                            <div class="col-sm-10"><button type="submit" class="btn btn-primary" name="submit">Edit
                                     Post</button>
                             </div>
                         </div>
@@ -116,4 +125,14 @@
                     e.preventDefault();
                 })
             </script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>            
+            <script>
+                $(document).ready(function() {
+                    $('#tag_id').select2({
+                        placeholder: "Pilih Tag",
+                        multiple: true
+                    });
+                });
+            </script>    
         @endsection
