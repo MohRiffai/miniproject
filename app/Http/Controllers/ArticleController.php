@@ -71,22 +71,20 @@ class ArticleController extends Controller
      */
     public function edit(Article $article)
     {
-        // dd($article);
-        $data = article::find($article->id);
+        // Find the article by ID
+        $data = Article::find($article->id);
+
+        // Retrieve the selected tag IDs for the article
+        $selectedTagIds = explode(',', $data->tag_id);
+
         return view('articles.edit', [
-            'categories' => Category::all()
-        ], ['tags' => Tag::all()])->with('data', $data);
+            'article' => $article,
+            'categories' => Category::all(),
+            'tags' => Tag::all(),
+            'selectedTagIds' => $selectedTagIds, // Pass the selected tag IDs to the view
+            'data' => $data, // Pass the $data variable to the view
+        ]);
     }
-
-    // public function edit(Article $article)
-    // {
-    //     $data = Article::find($article->id);
-    //     $categories = Category::all();
-    //     $tags = Tag::all();
-
-    //     return view('articles.edit', compact('article', 'categories', 'tags', 'data'));
-    // }
-
     /**
      * Update the specified resource in storage.
      */

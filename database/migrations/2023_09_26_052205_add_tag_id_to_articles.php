@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('articles', function (Blueprint $table) {
-            $table->string('category_name')->after('slug');
+            $table->integer('tag_id')->nullable()->after('content'); // 'tag_id' column
+            $table->foreign('tag_id')->references('id')->on('tags')->onDelete('cascade');
         });
     }
 
@@ -21,8 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('articles', function (Blueprint $table) {
-            Schema::dropIfExists('articles');
-        });
+        Schema::dropIfExists('articles');
     }
 };

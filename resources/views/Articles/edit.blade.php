@@ -43,7 +43,7 @@
                             <label for="slug" class="col-sm-2 col-form-label">Slug</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control @error('slug') is-invalid @enderror"
-                                    name='slug' value="{{ $data->slug }}" id="slug" value="{{ old('slug') }}">
+                                    name='slug' value="{{ $data->slug }}" id="slug" value="{{ old('slug') }}"> {{ $data->tag_id }}
                                 @error('slug')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -82,20 +82,31 @@
                             <div class="col-sm-10">
                                 <select class="form-select" name="tag_id[]" multiple="multiple" id="tag_id">
                                     @foreach ($tags as $tag)
-                                        <option value="{{ $tag->id }}" {{ is_array(old('tag_id')) && in_array($tag->id, old('tag_id')) ? 'selected' : '' }}>
+                                        <option value="{{ $tag->id }}" {{ (old('tag_id',[] , $data->tag_name) === $tag->name) ? 'selected' : '' }}>
                                             {{ $tag->name }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
-                        </div>                         --}}
+                        </div>--}}
+                        {{-- <div class="mb-3 row">
+                            <label for="tag" class="col-sm-2 col-form-label">Tags</label>
+                            <div class="col-sm-10">
+                                <select class="form-select" name="tag_id[]" multiple="multiple" id="tag_id">
+                                    @foreach ($tags as $tag)
+                                        <option value="{{ $tag->id }}"> {{ $tag->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div> --}}
                         <div class="mb-3 row">
                             <label for="tag" class="col-sm-2 col-form-label">Tags</label>
                             <div class="col-sm-10">
-                                <select class="form-control" name="tag_id[]" multiple="multiple" id="tag_id">
+                                <select class="form-select" name="tag_id[]" multiple="multiple" id="tag_id">
                                     @foreach ($tags as $tag)
-                                    {{-- <option {{ isset($article) && $article->tag()->find($tag->id) ? 'selected' : '' }} value="{{ $tag->id }}">{{ $tag->name }}</option>     --}}
-                                    <option {{ $article->tag()->find($tag->id) ? 'selected' : '' }} value="{{ $tag->id }}">{{ $tag->name }}</option>
+                                        <option value="{{ $tag->id }}" @if (in_array($tag->id, $selectedTagIds)) selected @endif>
+                                            {{ $tag->name }}
+                                        </option>
                                     @endforeach
                                 </select>
                             </div>
