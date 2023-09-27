@@ -31,7 +31,7 @@
                             <label for="tittle" class="col-sm-2 col-form-label">Tittle</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control @error('tittle') is-invalid @enderror"
-                                    name='tittle' value="{{ $data->tittle }}" id="tittle" value="{{ old('tittle') }}">
+                                    name='tittle' id="tittle" value="{{ old('tittle', $data->tittle) }}">
                                 @error('tittle')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -43,7 +43,7 @@
                             <label for="slug" class="col-sm-2 col-form-label">Slug</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control @error('slug') is-invalid @enderror"
-                                    name='slug' value="{{ $data->slug }}" id="slug" value="{{ old('slug') }}"> {{ $data->tag_id }}
+                                    name='slug' id="slug" value="{{ old('slug', $data->slug) }}" readonly>
                                 @error('slug')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -57,7 +57,8 @@
                                 <select class="form-select" name="category_name" id="">
                                     @isset($categories)
                                         @foreach ($categories as $category)
-                                            <option value="{{ $category->name }}" {{ (old('category_name', $data->category_name) === $category->name) ? 'selected' : '' }}>
+                                            <option value="{{ $category->name }}"
+                                                {{ old('category_name', $data->category_name) === $category->name ? 'selected' : '' }}>
                                                 {{ $category->name }}
                                             </option>
                                         @endforeach
@@ -65,15 +66,15 @@
                                 </select>
                             </div>
                         </div>
-                        
+
                         <div class="mb-3 row">
                             <label for="content" class="col-sm-2 col-form-label">Content</label>
                             <div class="col-sm-10">
                                 @error('content')
                                     <p class="text-danger">{{ $message }}</p>
                                 @enderror
-                                <input id="content" type="hidden" name="content" value="{{ $data->content }}"
-                                    value="{{ old('content') }}">
+                                <input id="content" type="hidden" name="content"
+                                    value="{{ old('content', $data->content) }}">
                                 <trix-editor input="content"></trix-editor>
                             </div>
                         </div>
@@ -88,7 +89,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                        </div>--}}
+                        </div> --}}
                         {{-- <div class="mb-3 row">
                             <label for="tag" class="col-sm-2 col-form-label">Tags</label>
                             <div class="col-sm-10">
@@ -102,16 +103,23 @@
                         <div class="mb-3 row">
                             <label for="tag" class="col-sm-2 col-form-label">Tags</label>
                             <div class="col-sm-10">
-                                <select class="form-select" name="tag_id[]" multiple="multiple" id="tag_id">
+                                <select class="form-select @error('tag_id') is-invalid @enderror" name="tag_id[]"
+                                    multiple="multiple" id="tag_id">
                                     @foreach ($tags as $tag)
-                                        <option value="{{ $tag->id }}" @if (in_array($tag->id, $selectedTagIds)) selected @endif>
+                                        <option value="{{ $tag->id }}"
+                                            @if (in_array($tag->id, old('tag_id', $selectedTagIds))) selected @endif>
                                             {{ $tag->name }}
                                         </option>
                                     @endforeach
                                 </select>
+                                @error('tag_id')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
                             </div>
                         </div>
-                        
+
                         <div class="mb-3 row">
                             <label for="save" class="col-sm-2 col-form-label"></label>
                             <div class="col-sm-10"><button type="submit" class="btn btn-primary" name="submit">Edit
@@ -136,8 +144,10 @@
                     e.preventDefault();
                 })
             </script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-            <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>            
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"
+                integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA=="
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
             <script>
                 $(document).ready(function() {
                     $('#tag_id').select2({
@@ -145,5 +155,5 @@
                         multiple: true
                     });
                 });
-            </script>    
+            </script>
         @endsection
