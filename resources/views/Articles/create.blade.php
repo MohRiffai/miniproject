@@ -42,7 +42,7 @@
                             <label for="slug" class="col-sm-2 col-form-label">Slug</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control @error('slug') is-invalid @enderror"
-                                    name='slug' id="slug" value="{{ old('slug') }}">
+                                    name='slug' id="slug" value="{{ old('slug') }}" readonly>
                                 @error('slug')
                                     <div class="invalid-feedback">
                                         {{ $message }}
