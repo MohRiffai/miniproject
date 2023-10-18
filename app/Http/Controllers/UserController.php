@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-
+use Spatie\Permission\Models\Role;
 class UserController extends Controller
 {
     /**
@@ -12,8 +12,9 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
+        
         $keywords = $request->keywords;
-        $inline = 3;
+        $inline = 5;
         if (strlen($keywords)) {
             $data = user::where('id', 'like', "%$keywords%")
                 ->orWhere('name', 'like', "%$keywords%")
@@ -23,7 +24,10 @@ class UserController extends Controller
         } else {
             $data = user::orderBy('id', 'desc')->paginate($inline);
         }
-        return view(view: 'users.index')->with('data', $data);
+        return view('users.index', [
+                'roles' => Role::all(),
+                'data'=> $data    
+        ]);
     }
 
     /**
@@ -31,7 +35,9 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view(view: 'users.create');
+        return view('users.create', [
+            'roles' => Role::all()
+        ]);
     }
 
     /**
@@ -42,6 +48,7 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required',
+            'role' => 'required',
             'password' => 'required',
         ]);
 
@@ -54,11 +61,13 @@ class UserController extends Controller
         $data = [
             'name' => $request->name,
             'email' => $request->email,
+            'role' => $request->role,
             'phone' => $request->phone,
             'password' => bcrypt($request->password)
         ];
 
         User::create($data);
+
         return redirect()->to('users')->with('success', 'Successfully added data');
     }
 

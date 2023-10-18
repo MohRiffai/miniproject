@@ -24,7 +24,7 @@
 
         <!-- TOMBOL TAMBAH DATA -->
         <div class="pb-3">
-            <a href='{{ 'users/create'}}' class="btn btn-primary">+ Add Data</a>
+            <a href='{{ 'users/create' }}' class="btn btn-primary">+ Add Data</a>
         </div>
 
         <table class="table table-striped">
@@ -32,35 +32,40 @@
                 <tr>
                     <th class="col-md-1">No</th>
                     <th class="col-md-2">Name</th>
-                    <th class="col-md-3">E-mail</th>
-                    {{-- <th class="col-md-2">Role</th> --}}
-                    <th class="col-md-3">Phone</th>
+                    <th class="col-md-2">E-mail</th>
+                    <th class="col-md-2">Role</th>
+                    <th class="col-md-2">Phone</th>
                     <th class="col-md-2">Action</th>
                 </tr>
             </thead>
             <tbody>
-                <?php $i =$data->firstItem()?>
+                <?php $i = $data->firstItem(); ?>
                 @foreach ($data as $item)
-                <tr>
-                    <td><?php echo $i?></td>
-                    <td>{{ $item->name }}</td>
-                    <td>{{ $item->email }}</td>
-                    {{-- <td>{{ $item->role }}</td> --}}
-                    <td>{{ $item->phone }}</td>
-                    <td>
-                        <a href='{{ url('users/'.$item->name.'/edit') }}' class="btn btn-warning btn-sm">Edit</a>
-                        <form onsubmit="return confirm('Are you sure to delete this data?')" class='d-inline' action="{{ url('users/'.$item->name) }}" method="post">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" name="submit" class="btn btn-danger btn-sm">Del</button>
-                        </form>
-                    </td>
-                </tr>
-                <?php $i++?>
+                    <tr>
+                        <td><?php echo $i; ?></td>
+                        <td>{{ $item->name }}</td>
+                        <td>{{ $item->email }}</td>
+                        <td>
+                            @foreach ($item->getRoleNames() as $role)
+                                {{ $role }}<br>
+                            @endforeach
+                        </td>
+                        <td>{{ $item->phone }}</td>
+                        <td>
+                            <a href='{{ url('users/' . $item->name . '/edit') }}' class="btn btn-warning btn-sm">Edit</a>
+                            <form onsubmit="return confirm('Are you sure to delete this data?')" class='d-inline'
+                                action="{{ url('users/' . $item->name) }}" method="post">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" name="submit" class="btn btn-danger btn-sm">Del</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <?php $i++; ?>
                 @endforeach
             </tbody>
         </table>
-    {{ $data->links() }}
+        {{ $data->links() }}
 
     </div>
     <!-- AKHIR DATA -->

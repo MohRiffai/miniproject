@@ -8,6 +8,8 @@ use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\PermissionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -30,7 +32,15 @@ Route::middleware('auth')->group(function () {
     route::resource(name: 'categories', controller: \App\Http\Controllers\CategoryController::class);
     route::resource(name: 'tags', controller: \App\Http\Controllers\TagController::class);
     route::resource(name: 'articles', controller: \App\Http\Controllers\ArticleController::class);
+    Route::get('/roles/manage', [RoleController::class, 'manage'])->name('roles.manage');
+    Route::post('roles/assignRole', [RoleController::class, 'assignRole'])->name('role.assign');
+    Route::delete('/remove-role/{user_name}/{role_name}', [RoleController::class, 'removeRole'])->name('remove.role');
+    // Route::delete('/revoke-role/{user_name}/{role_name}', [RoleController::class, 'revokeRole'])->name('revoke.role');
+    Route::put('roles/{role}/permissions', 'RoleController@updatePermission')->name('roles.updatePermission');
+    route::resource(name: 'roles', controller: \App\Http\Controllers\RoleController::class);
+    route::resource(name: 'permissions', controller: \App\Http\Controllers\PermissionController::class);
     
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

@@ -24,6 +24,20 @@
                 </div>
             </div>
             <div class="mb-3 row">
+                <label for="category" class="col-sm-2 col-form-label">Role</label>
+                <div class="col-sm-10">
+                    <select class="form-select" name="role" id="role">
+                        @foreach ($roles as $role)
+                            @if (old('role') === $role->name)
+                                <option value="{{ $role->name }}" selected>{{ $role->name }}</option>
+                            @else
+                                <option value="{{ $role->name }}">{{ $role->name }}</option>
+                            @endif
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+            <div class="mb-3 row">
                 <label for="phone" class="col-sm-2 col-form-label">Phone</label>
                 <div class="col-sm-10">
                     <input type="text" class="form-control" name='phone' id="phone">

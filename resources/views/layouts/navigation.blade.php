@@ -13,23 +13,29 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     @auth
+
                         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                             {{ __('Dashboard') }}
                         </x-nav-link>
                         <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
                             {{ __('Users') }}
                         </x-nav-link>
-
                         <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
                             {{ __('Categories') }}
                         </x-nav-link>
-
                         <x-nav-link :href="route('tags.index')" :active="request()->routeIs('tags.*')">
                             {{ __('Tags') }}
                         </x-nav-link>
                         <x-nav-link :href="route('articles.index')" :active="request()->routeIs('articles.*')">
                             {{ __('Articles') }}
                         </x-nav-link>
+                        <x-nav-link :href="route('roles.index')" :active="request()->routeIs('roles.*')">
+                            {{ __('Roles') }}
+                        </x-nav-link>
+                        <x-nav-link :href="route('permissions.index')" :active="request()->routeIs('permissions.*')">
+                            {{ __('Permissions') }}
+                        </x-nav-link>
+
                     @endauth
                 </div>
             </div>
@@ -149,3 +155,31 @@
         </div>
     </div>
 </nav>
+{{-- <head>
+    <link rel="stylesheet" href="sidebar.css">
+</head>
+
+
+    <div class="container">
+        <div class="sidebar">
+            <div class="header">
+                <div class="list-item">
+                    <a href="#">
+                        <img src="" alt="" class="icon">
+                        <span class="description-header">Online</span>
+                    </a>
+                </div>
+                <div class="main">
+                    <div class="list-item">
+                        <a href="#">
+                            <img src="" alt="" class="icon">
+                            <span class="description"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="resources\js\sidebar.js"></script>
+
+</html> --}}

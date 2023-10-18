@@ -6,11 +6,11 @@
 <!-- START DATA -->
 @extends('layouts.articlecss')
 @section('content')
-@if(session()->has('success'))
-    <div class='alert alert-success' role='alert'>
-        {{ session('success') }}
-    </div>
-@endif
+    @if (session()->has('success'))
+        <div class='alert alert-success' role='alert'>
+            {{ session('success') }}
+        </div>
+    @endif
     <div class="my-3 p-3 bg-body rounded shadow-sm">
         <!-- FORM PENCARIAN -->
         <div class="pb-3">
@@ -23,41 +23,52 @@
 
         <!-- TOMBOL TAMBAH DATA -->
         <div class="pb-3">
-            <a href='{{ 'articles/create'}}' class="btn btn-primary">+ Add Data</a>
+            <a href='{{ 'articles/create' }}' class="btn btn-primary">+ Add Data</a>
         </div>
 
         <table class="table table-striped">
             <thead>
                 <tr>
                     <th class="col-md-1">No</th>
-                    <th class="col-md-4">Tittle</th>
-                    <th class="col-md-4">Category</th>
+                    <th class="col-md-2">Tittle</th>
+                    <th class="col-md-1">Category</th>
+                    <th class="col-md-2">Tags</th>
+                    <th class="col-md-4">Gambar</th>
                     {{-- <th class="col-md-2">Role</th> --}}
                     <th class="col-md-2">Action</th>
                 </tr>
             </thead>
             <tbody>
-                <?php $i =$data->firstItem()?>
+                <?php $i = $data->firstItem(); ?>
                 @foreach ($data as $item)
-                <tr>
-                    <td><?php echo $i?></td>
-                    <td>{{ $item->tittle }}</td>
-                    <td>{{ $item->category_name}}</td>
-                    {{-- <td>{{ $item->role }}</td> --}}
-                    <td>
-                        <a href='{{ url('articles/'.$item->slug.'/edit') }}' class="btn btn-warning btn-sm">Edit</a>
-                        <form onsubmit="return confirm('Are you sure to delete this data?')" class='d-inline' action="{{ url('articles/'.$item->slug) }}" method="post">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" name="submit" class="btn btn-danger btn-sm">Del</button>
-                        </form>
-                    </td>
-                </tr>
-                <?php $i++?>
+                    <tr>
+                        <td><?php echo $i; ?></td>
+                        <td>{{ $item->tittle }}</td>
+                        <td>{{ $item->category_name }}</td>
+                        <td>
+                            @foreach ($tags as $tag)
+                                @if (in_array($tag->id, explode(',', $item->tag_id)))
+                                    {{ $tag->name }},
+                                @endif
+                            @endforeach
+                        </td>
+                        <td>{{ $item->picture }}</td>
+                        <td>
+                            <a href='' class="btn btn-success btn-sm">View</a>
+                            <a href='{{ url('articles/' . $item->slug . '/edit') }}' class="btn btn-warning btn-sm">Edit</a>
+                            <form onsubmit="return confirm('Are you sure to delete this data?')" class='d-inline'
+                                action="{{ url('articles/' . $item->slug) }}" method="post">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" name="submit" class="btn btn-danger btn-sm">Del</button>
+                            </form>
+                        </td>
+                    </tr>
+                    <?php $i++; ?>
                 @endforeach
             </tbody>
         </table>
-    {{ $data->links() }}
+        {{ $data->links() }}
 
     </div>
     <!-- AKHIR DATA -->

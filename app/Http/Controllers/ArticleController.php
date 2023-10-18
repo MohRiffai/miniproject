@@ -12,8 +12,9 @@ class ArticleController extends Controller
 {
     public function index(Request $request)
     {
+        // $this->authorize('admin');
         $keywords = $request->keywords;
-        $inline = 3;
+        $inline = 10;
         if (strlen($keywords)) {
             $data = article::where('id', 'like', "%$keywords%")
                 ->orWhere('tittle', 'like', "%$keywords%")
@@ -23,7 +24,10 @@ class ArticleController extends Controller
         } else {
             $data = article::orderBy('id', 'desc')->paginate($inline);
         }
-        return view(view: 'articles.index')->with('data', $data);
+        return view('articles.index', [
+            'tags' => Tag::all(),
+            'data' => $data,
+        ]);
     }
 
     /**

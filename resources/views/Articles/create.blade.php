@@ -80,7 +80,7 @@
                             <div class="col-sm-10">
                                 <select class="form-select" name="tag_id[]" multiple="multiple" id="tag_id">
                                     @foreach ($tags as $tag)
-                                        <option value="{{ $tag->name }}" {{ in_array($tag->name, old('tag_id', [])) ? 'selected' : '' }}>
+                                        <option value="{{ $tag->id }}" {{ in_array($tag->id, old('tag_id', [])) ? 'selected' : '' }}>
                                             {{ $tag->name }}
                                         </option>
                                     @endforeach
