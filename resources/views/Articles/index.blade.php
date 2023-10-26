@@ -47,7 +47,7 @@
                         <td>{{ $item->category_name }}</td>
                         <td>
                             @foreach ($tags as $tag)
-                                @if (in_array($tag->id, explode(',', $item->tag_id)))
+                                @if (in_array($tag->name, explode(',', $item->tag_name)))
                                     {{ $tag->name }},
                                 @endif
                             @endforeach

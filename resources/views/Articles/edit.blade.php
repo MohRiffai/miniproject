@@ -103,16 +103,16 @@
                         <div class="mb-3 row">
                             <label for="tag" class="col-sm-2 col-form-label">Tags</label>
                             <div class="col-sm-10">
-                                <select class="form-select @error('tag_id') is-invalid @enderror" name="tag_id[]"
-                                    multiple="multiple" id="tag_id">
+                                <select class="form-select @error('tag_name') is-invalid @enderror" name="tag_name[]"
+                                    multiple="multiple" id="tag_name">
                                     @foreach ($tags as $tag)
-                                        <option value="{{ $tag->id }}"
-                                            @if (in_array($tag->id, old('tag_id', $selectedTagIds))) selected @endif>
+                                        <option value="{{ $tag->name }}"
+                                            @if (in_array($tag->name, old('tag_name', $selectedTagIds))) selected @endif>
                                             {{ $tag->name }}
                                         </option>
                                     @endforeach
                                 </select>
-                                @error('tag_id')
+                                @error('tag_name')
                                     <div class="invalid-feedback">
                                         {{ $message }}
                                     </div>
@@ -150,7 +150,7 @@
             <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
             <script>
                 $(document).ready(function() {
-                    $('#tag_id').select2({
+                    $('#tag_name').select2({
                         placeholder: "Pilih Tag",
                         multiple: true
                     });

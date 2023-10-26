@@ -6,7 +6,7 @@
 <!-- START DATA -->
 @extends('layouts.templatecss')
 @section('content')
-    <a href="{{ url('roles') }}" class="my-3 btn btn-secondary">
+    <a href=" {{ url()->previous() }}" class="my-3 btn btn-secondary">
         << Back</a>
             <div class="container">
                 <div class="row">
@@ -37,10 +37,12 @@
                                 </form>
                                 <div class="mt-4">
                                     <h4>Roles Assigned to Users:</h4>
-                                    <p style="color:red; font-size:14px; font-style:italic ">(Klik untuk menghapus Role pada User)</p>
-                                    <ul>
+                                    <p style="color: red; font-size: 14px; font-style: italic;">(Klik untuk menghapus Role
+                                        pada User)</p>
+
+                                    <ul class="list-inline">
                                         @foreach ($modelHasRoles as $modelHasRole)
-                                            <li>
+                                            <li class="list-inline-item">
                                                 <form
                                                     onsubmit="return confirm('Are you sure to revoke this role from the user?')"
                                                     class="d-inline"
@@ -48,9 +50,10 @@
                                                     method="post">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm mt-3">Username: {{ $modelHasRole->user_name }} => Role: {{ $modelHasRole->role_name }}</button>
+                                                    <button type="submit" class="btn btn-danger btn-sm mt-3"
+                                                        style="background-color: red; color: white; border: none; border-radius: 5px; padding: 5px 10px;">{{ $modelHasRole->user_name }}
+                                                        => {{ $modelHasRole->role_name }}</button>
                                                 </form>
-
                                             </li>
                                         @endforeach
                                     </ul>
@@ -58,47 +61,89 @@
                             </div>
                         </div>
                     </div>
+
                     <div class="col-md-6">
                         <div class="card">
-                            <div class="card-header">Manage Role & Permissions</div>
+                            <div class="card-header">Assign Permission to Role</div>
                             <div class="card-body">
-                                <h3 class="card-title">Manage Role:</h3>
-                                <div class="form-group mt-3">
-                                    <label for="role_id">Select Role:</label>
-                                    <select class="form-control" name="role_id" id="role_id">
-                                        @foreach ($roles as $role)
-                                            <option value="{{ $role->id }}">{{ $role->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <h3 class="mb-2 mt-3">Permissions:</h3>
-                                <ul class="list-group">
-                                    @foreach ($data->permissions as $permission)
-                                        <li class="list-group-item">{{ $permission->name }}</li>
-                                    @endforeach
-                                </ul>
-
-                                <form method="post" action="">
+                                <!-- Form to assign a permission to a role -->
+                                <form action="{{ route('roles.givePermission') }}" method="POST">
                                     @csrf
-                                    @method('PUT')
-                                    <div class="form-group mt-2">
-                                        <label for="permission_ids">Add Permissions:</label>
-                                        @foreach ($permissions as $permission)
-                                            <div class="form-check">
-                                                <input class="form-check-input" type="checkbox" name="permission_ids[]"
-                                                    id="permission_{{ $permission->id }}" value="{{ $permission->id }}">
-                                                <label class="form-check-label" for="permission_{{ $permission->id }}">
-                                                    {{ $permission->name }}
-                                                </label>
-                                            </div>
-                                        @endforeach
+                                    <div class="form-group">
+                                        <label for="role_id">Select Role:</label>
+                                        <select class="form-control" name="role_id" id="role_id">
+                                            @foreach ($roles as $role)
+                                                <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                            @endforeach
+                                        </select>
                                     </div>
-                                    <button type="submit" class="btn btn-primary mt-3">Add Permissions</button>
+
+                                    <div class="form-group mt-3">
+                                        <label for="permission_id">Select Permission:</label>
+                                        <select class="form-control" name="permission_id" id="permission_id">
+                                            @foreach ($permissions as $permission)
+                                                <option value="{{ $permission->id }}">{{ $permission->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary mt-3">Assign Permission</button>
                                 </form>
+                                @php
+                                    $currentRole = null;
+                                    $sortedRoleHasPermissions = $roleHasPermissions->sortBy('role_name');
+                                @endphp
+
+                                <div class="mt-4">
+                                    <h4>Permission Assigned to Role:</h4>
+                                    <p style="color: red; font-size: 14px; font-style: italic;">(Klik "Detach" untuk
+                                        menghapus Permission pada)</p>
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Role</th>
+                                                <th>Permission</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach ($sortedRoleHasPermissions as $roleHasPermission)
+                                                @if ($currentRole !== $roleHasPermission->role_name)
+                                                    @php
+                                                        $currentRole = $roleHasPermission->role_name;
+                                                    @endphp
+                                                    <tr>
+                                                        <td colspan="3">
+                                                            <strong>{{ $roleHasPermission->role_name }}</strong>
+                                                        </td>
+                                                    </tr>
+                                                @endif
+                                                <tr>
+                                                    <td></td>
+                                                    <td>{{ $roleHasPermission->permission_name }}</td>
+                                                    <td>
+                                                        <form
+                                                            onsubmit="return confirm('Are you sure to revoke this permission from the role?')"
+                                                            class="d-inline"
+                                                            action="{{ route('roles.permissions.revoke', [$roleHasPermission->role_name, $roleHasPermission->permission_name]) }}"
+                                                            method="post">
+                                                            @csrf
+                                                            @method('DELETE')
+                                                            <button type="submit" class="btn btn-danger btn-sm"
+                                                                style="background-color: red; color: white; border: none; border-radius: 5px; padding: 5px 10px;">Detach</button>
+                                                        </form>
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+            </div>
             </div>
             <!-- AKHIR DATA -->
             </main>

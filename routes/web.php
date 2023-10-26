@@ -22,12 +22,12 @@ use App\Http\Controllers\PermissionController;
 |
 */
 
-route ::get(uri: '/', action: \App\Http\Controllers\HomeController::class)->name(name:'home');
+route::get(uri: '/', action: \App\Http\Controllers\HomeController::class)->name(name: 'home');
 // route ::get(uri: 'articles', action: [\App\Http\Controllers\ArticleController::class, 'index'])->name(name:'articles.index');
 route::get('/articles/article/checkSlug', [ArticleController::class, 'checkSlug']);
 
-Route::middleware('auth')->group(function () {
-    route::get(uri: 'dashboard', action: \App\Http\Controllers\DashboardController::class)->name(name:'dashboard');
+Route::middleware(['auth'])->group(function () {
+    route::get(uri: 'dashboard', action: \App\Http\Controllers\DashboardController::class)->name(name: 'dashboard');
     route::resource(name: 'users', controller: \App\Http\Controllers\UserController::class);
     route::resource(name: 'categories', controller: \App\Http\Controllers\CategoryController::class);
     route::resource(name: 'tags', controller: \App\Http\Controllers\TagController::class);
@@ -35,15 +35,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/roles/manage', [RoleController::class, 'manage'])->name('roles.manage');
     Route::post('roles/assignRole', [RoleController::class, 'assignRole'])->name('role.assign');
     Route::delete('/remove-role/{user_name}/{role_name}', [RoleController::class, 'removeRole'])->name('remove.role');
-    // Route::delete('/revoke-role/{user_name}/{role_name}', [RoleController::class, 'revokeRole'])->name('revoke.role');
-    Route::put('roles/{role}/permissions', 'RoleController@updatePermission')->name('roles.updatePermission');
+    Route::post('/roles/givePermission', [RoleController::class, 'givePermission'])->name('roles.givePermission');
+    Route::delete('/roles/{role}/revoke-permission/{permission}', [RoleController::class, 'revokePermission'])->name('roles.permissions.revoke');
     route::resource(name: 'roles', controller: \App\Http\Controllers\RoleController::class);
     route::resource(name: 'permissions', controller: \App\Http\Controllers\PermissionController::class);
-    
+
+    Route::middleware(['can:viewAny,App\User'])->group(function () {
+        Route::resource('users', UserController::class);
+    });
+
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

@@ -20,6 +20,7 @@ class ArticleController extends Controller
                 ->orWhere('tittle', 'like', "%$keywords%")
                 ->orWhere('category_name', 'like', "%$keywords%")
                 ->orWhere('slug', 'like', "%$keywords%")
+                ->orWhere('tag_name', 'like', "%$keywords%")
                 ->paginate($inline);
         } else {
             $data = article::orderBy('id', 'desc')->paginate($inline);
@@ -50,13 +51,13 @@ class ArticleController extends Controller
             'slug' => 'required|unique:articles',
             'category_name' => 'required',
             'content' => 'required',
-            'tag_id' => 'required|array',
+            'tag_name' => 'required|array',
         ]);
 
-        $setTagIdAsString = implode(',', $data['tag_id']);
+        $setTagIdAsString = implode(',', $data['tag_name']);
 
         // Modify the 'tag_id' value in the $data array
-        $data['tag_id'] = $setTagIdAsString;
+        $data['tag_name'] = $setTagIdAsString;
 
         article::create($data);
         return redirect()->to('articles')->with('success', 'Successfully added data');
@@ -99,17 +100,17 @@ class ArticleController extends Controller
             'slug' => 'required|unique:articles,slug,' . $article->id,
             'category_name' => 'required',
             'content' => 'required',
-            'tag_id' => 'required|array',
+            'tag_name' => 'required|array',
         ]);
 
-        $setTagIdAsString = implode(',', $request->input('tag_id'));
+        $setTagIdAsString = implode(',', $request->input('tag_name'));
 
         $article->update([
             'tittle' => $request->input('tittle'),
             'slug' => $request->input('slug'),
             'category_name' => $request->input('category_name'),
             'content' => $request->input('content'),
-            'tag_id' => $setTagIdAsString,
+            'tag_name' => $setTagIdAsString,
         ]);
 
         return redirect()->route('articles.index')->with('success', 'Successfully updated data');

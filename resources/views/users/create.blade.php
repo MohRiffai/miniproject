@@ -23,7 +23,7 @@
                     <input type="text" class="form-control" name='email' id="email">
                 </div>
             </div>
-            <div class="mb-3 row">
+            {{-- <div class="mb-3 row">
                 <label for="category" class="col-sm-2 col-form-label">Role</label>
                 <div class="col-sm-10">
                     <select class="form-select" name="role" id="role">
@@ -36,7 +36,7 @@
                         @endforeach
                     </select>
                 </div>
-            </div>
+            </div> --}}
             <div class="mb-3 row">
                 <label for="phone" class="col-sm-2 col-form-label">Phone</label>
                 <div class="col-sm-10">

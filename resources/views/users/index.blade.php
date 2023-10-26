@@ -23,8 +23,9 @@
         </div>
 
         <!-- TOMBOL TAMBAH DATA -->
-        <div class="pb-3">
+        <div class="pb-3" style="display: flex; justify-content: space-between;">
             <a href='{{ 'users/create' }}' class="btn btn-primary">+ Add Data</a>
+            <a href="{{ route('roles.manage') }}" class="btn btn-primary">Manage Role</a>
         </div>
 
         <table class="table table-striped">
@@ -46,8 +47,11 @@
                         <td>{{ $item->name }}</td>
                         <td>{{ $item->email }}</td>
                         <td>
-                            @foreach ($item->getRoleNames() as $role)
-                                {{ $role }}<br>
+                            @foreach ($item->roles as $role)
+                                <!-- Menggunakan loop foreach pada $item->roles -->
+                                {{ $role->name }}
+                                {{-- @if (!$loop->last),
+                                @endif --}}
                             @endforeach
                         </td>
                         <td>{{ $item->phone }}</td>

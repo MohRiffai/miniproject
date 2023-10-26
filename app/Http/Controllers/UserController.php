@@ -5,28 +5,74 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\DB;
+
 class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
+    // public function index(Request $request)
+    // {
+
+    //     $keywords = $request->keywords;
+    //     $inline = 5;
+    //     if (strlen($keywords)) {
+    //         $data = user::where('id', 'like', "%$keywords%")
+    //             ->orWhere('name', 'like', "%$keywords%")
+    //             ->orWhere('email', 'like', "%$keywords%")
+    //             ->orWhere('phone', 'like', "%$keywords%")
+    //             ->paginate($inline);
+    //     } else {
+    //         $data = user::orderBy('id', 'desc')->paginate($inline);
+    //     }
+    //     $modelHasRoles = DB::table('model_has_roles')
+    //         ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+    //         ->join('users', 'model_has_roles.model_id', '=', 'users.id')
+    //         ->select('users.name as user_name', 'roles.name as role_name')
+    //         ->where('model_has_roles.model_type', 'App\Models\User')
+    //         ->get();
+    //     return view('users.index', [
+    //             'roles' => Role::all(),
+    //             'modelHasRoles' => $modelHasRoles,
+    //             'data'=> $data    
+    //     ]);
+    // }
+
     public function index(Request $request)
     {
-        
         $keywords = $request->keywords;
         $inline = 5;
+
+        $data = User::query();
+
         if (strlen($keywords)) {
-            $data = user::where('id', 'like', "%$keywords%")
+            $data->where('id', 'like', "%$keywords%")
                 ->orWhere('name', 'like', "%$keywords%")
                 ->orWhere('email', 'like', "%$keywords%")
-                ->orWhere('phone', 'like', "%$keywords%")
-                ->paginate($inline);
+                ->orWhere('phone', 'like', "%$keywords%");
+
+            // Tambahkan juga pencarian berdasarkan role
+            $data->orWhereHas('roles', function ($query) use ($keywords) {
+                $query->where('name', 'like', "%$keywords%");
+            });
         } else {
-            $data = user::orderBy('id', 'desc')->paginate($inline);
+            $data = user::orderBy('id', 'desc');
         }
+
+        $data = $data->paginate($inline);
+
+        $modelHasRoles = DB::table('model_has_roles')
+            ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+            ->join('users', 'model_has_roles.model_id', '=', 'users.id')
+            ->select('users.name as user_name', 'roles.name as role_name')
+            ->where('model_has_roles.model_type', 'App\Models\User')
+            ->get();
+
         return view('users.index', [
-                'roles' => Role::all(),
-                'data'=> $data    
+            'roles' => Role::all(),
+            'modelHasRoles' => $modelHasRoles,
+            'data' => $data
         ]);
     }
 
@@ -48,20 +94,18 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required',
             'email' => 'required',
-            'role' => 'required',
             'password' => 'required',
         ]);
 
-        if($request->phone == ""){
+        if ($request->phone == "") {
             $phone = $user->phone;
-        }else{
+        } else {
             $phone = $request->phone;
         }
 
         $data = [
             'name' => $request->name,
             'email' => $request->email,
-            'role' => $request->role,
             'phone' => $request->phone,
             'password' => bcrypt($request->password)
         ];
@@ -108,9 +152,9 @@ class UserController extends Controller
 
         ]);
 
-        if($request->password == ""){
+        if ($request->password == "") {
             $password = $user->password;
-        }else{
+        } else {
             $password = bcrypt($request->password);
         }
 

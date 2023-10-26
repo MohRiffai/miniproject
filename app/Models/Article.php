@@ -10,7 +10,7 @@ class Article extends Model
 {
     use HasFactory;
     use Sluggable;
-    protected $fillable = ['tittle', 'slug', 'category_name', 'content', 'tag_id'];
+    protected $fillable = ['tittle', 'slug', 'category_name', 'content', 'tag_name'];
 
     public function category()
     {
@@ -18,6 +18,11 @@ class Article extends Model
     }
 
     public function tags()
+    {
+        return $this->belongsToMany(Tag::class);
+    }
+
+    public function tagsearch()
     {
         return $this->belongsToMany(Tag::class);
     }
