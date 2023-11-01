@@ -43,6 +43,11 @@ class User extends Authenticatable
         return $this->morphToMany(ModelHasRoles::class, 'model');
     }
 
+    public function articles()
+    {
+        return $this->hasMany(Article::class, 'author_id');
+    }
+
     /**
      * The attributes that should be cast.
      *
@@ -56,5 +61,10 @@ class User extends Authenticatable
     public function getRouteKeyName()
     {
         return 'name';
+    }
+
+    public function isAdmin() 
+    {
+        return $this->hasRole('Admin') ? true : false;
     }
 }

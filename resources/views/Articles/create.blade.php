@@ -23,11 +23,11 @@
                     </style>
                     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
                 </head>
-                <form action='{{ url('articles') }}' method='post'>
+                <form action='{{ url('articles') }}' method='post' enctype="multipart/form-data">
                     @csrf
                     <div class="my-3 p-3 bg-body rounded shadow-sm">
                         <div class="mb-3 row">
-                            <label for="tittle" class="col-sm-2 col-form-label">Tittle</label>
+                            <label for="tittle" class="col-sm-2 col-form-label">Title</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control @error('tittle') is-invalid @enderror"
                                     name='tittle' id="tittle" value="{{ old('tittle') }}">
@@ -50,6 +50,29 @@
                                 @enderror
                             </div>
                         </div>
+                        {{-- <div class="mb-3 row">
+                            <label for="author" class="col-sm-2 col-form-label">Author</label>
+                            <div class="col-sm-10">
+                                @if (auth()->check())
+                                    <input type="text" class="form-control" name="author" id="author" value="{{ auth()->user()->name }}" readonly>
+                                @else
+                                    <input type="text" class="form-control" name="author" id="author" value="{{ old('author') }}" readonly>
+                                @endif
+                                @error('author')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                        </div> --}}
+                        <div class="mb-3 row">
+                            <label for="author" class="col-sm-2 col-form-label">Author</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="author" id="author"
+                                    value="{{ auth()->user()->name .' (' .auth()->user()->getRoleNames()->first() .')' }}"
+                                    readonly>
+                            </div>
+                        </div>
                         <div class="mb-3 row">
                             <label for="category" class="col-sm-2 col-form-label">Category</label>
                             <div class="col-sm-10">
@@ -65,14 +88,23 @@
                             </div>
                         </div>
                         <div class="mb-3 row">
-                            <label for="content" class="col-sm-2 col-form-label">Content</label>
+                            <label for="image" class="col-sm-2 col-form-label">Post Image</label>
                             <div class="col-sm-10">
-                                @error('content')
-                                    <p class="text-danger">{{ $message }}</p>
+                                <input class="form-control @error('image') is-invalid @enderror" type="file" id="image" name="image">
+                                @error('image')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
                                 @enderror
-                                <input id="content" type="hidden" name="content" value="{{ old('content') }}">
-                                <trix-editor input="content"></trix-editor>
                             </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="content" class="col-form-label">Content</label>
+                            @error('content')
+                                <p class="text-danger">{{ $message }}</p>
+                            @enderror
+                            <input id="content" type="hidden" name="content" value="{{ old('content') }}">
+                            <trix-editor input="content"></trix-editor>
                         </div>
 
                         <div class="mb-3 row">
@@ -80,15 +112,14 @@
                             <div class="col-sm-10">
                                 <select class="form-select" name="tag_name[]" multiple="multiple" id="tag_name">
                                     @foreach ($tags as $tag)
-                                        <option value="{{ $tag->name }}" {{ in_array($tag->name, old('tag_nmae', [])) ? 'selected' : '' }}>
+                                        <option value="{{ $tag->name }}"
+                                            {{ in_array($tag->name, old('tag_name', [])) ? 'selected' : '' }}>
                                             {{ $tag->name }}
                                         </option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
-                        
-                        
                         <div class="mb-3 row">
                             <label for="save" class="col-sm-2 col-form-label"></label>
                             <div class="col-sm-10"><button type="submit" class="btn btn-primary" name="submit">Create
@@ -113,8 +144,10 @@
                     e.preventDefault();
                 })
             </script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-            <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>            
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"
+                integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA=="
+                crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
             <script>
                 $(document).ready(function() {
                     $('#tag_name').select2({
@@ -122,5 +155,5 @@
                         multiple: true
                     });
                 });
-            </script>            
+            </script>
         @endsection

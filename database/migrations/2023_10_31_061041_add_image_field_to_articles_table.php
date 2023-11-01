@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('articles', function (Blueprint $table) {
-            $table->string('tag_name')->after('content');
+            $table->string('image')->after('category_name')->nullable(); // Menggunakan tipe string untuk menyimpan path gambar
         });
     }
 
@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('articles', function (Blueprint $table) {
-            Schema::dropIfExists('articles');
+            $table->dropColumn('image'); // Menghapus kolom 'image' saat melakukan migrasi rollback
         });
     }
 };

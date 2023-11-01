@@ -23,7 +23,7 @@
                     </style>
                     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
                 </head>
-                <form action='{{ url('articles/' . $data->slug) }}' method='post'>
+                <form action='{{ url('articles/' . $data->slug) }}' method='post' enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <div class="my-3 p-3 bg-body rounded shadow-sm">
@@ -52,6 +52,12 @@
                             </div>
                         </div>
                         <div class="mb-3 row">
+                            <label for="author" class="col-sm-2 col-form-label">Author</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="author" id="author" value="{{ $data->author->name }} ({{ $article->author->roles->first()->name }})"   readonly>
+                            </div>
+                        </div>
+                        <div class="mb-3 row">
                             <label for="category" class="col-sm-2 col-form-label">Category</label>
                             <div class="col-sm-10">
                                 <select class="form-select" name="category_name" id="">
@@ -66,7 +72,17 @@
                                 </select>
                             </div>
                         </div>
-
+                        <div class="mb-3 row">
+                            <label for="image" class="col-sm-2 col-form-label">Post Image</label>
+                            <div class="col-sm-10">
+                                <input class="form-control @error('image') is-invalid @enderror" type="file" id="image" name="image">
+                                @error('image')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
+                            </div>
+                        </div>
                         <div class="mb-3 row">
                             <label for="content" class="col-sm-2 col-form-label">Content</label>
                             <div class="col-sm-10">
@@ -104,7 +120,7 @@
                             <label for="tag" class="col-sm-2 col-form-label">Tags</label>
                             <div class="col-sm-10">
                                 <select class="form-select @error('tag_name') is-invalid @enderror" name="tag_name[]"
-                                    multiple="multiple" id="tag_name">
+                                    multiple="multiple" id="tag_name"> 
                                     @foreach ($tags as $tag)
                                         <option value="{{ $tag->name }}"
                                             @if (in_array($tag->name, old('tag_name', $selectedTagIds))) selected @endif>

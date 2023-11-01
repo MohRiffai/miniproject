@@ -31,9 +31,10 @@
                 <tr>
                     <th class="col-md-1">No</th>
                     <th class="col-md-2">Tittle</th>
+                    <th class="col-md-1">Author</th>
                     <th class="col-md-1">Category</th>
-                    <th class="col-md-2">Tags</th>
-                    <th class="col-md-4">Gambar</th>
+                    <th class="col-md-1">Tags</th>
+                    <th class="col-md-2">Image</th>
                     {{-- <th class="col-md-2">Role</th> --}}
                     <th class="col-md-2">Action</th>
                 </tr>
@@ -44,6 +45,14 @@
                     <tr>
                         <td><?php echo $i; ?></td>
                         <td>{{ $item->tittle }}</td>
+                        {{-- <td>{{ $item->author->name }}</td> --}}
+                        <td>
+                            @if ($item->author)
+                                {{ $item->author->name }}
+                            @else
+                                No Author
+                            @endif
+                        </td>
                         <td>{{ $item->category_name }}</td>
                         <td>
                             @foreach ($tags as $tag)
@@ -52,16 +61,25 @@
                                 @endif
                             @endforeach
                         </td>
-                        <td>{{ $item->picture }}</td>
+                        <td>
+                            <img src="{{ asset('storage/' . $item->image) }}" alt="Image"
+                                style="max-width: 200px; max-height: 200px;">
+                        </td>
                         <td>
                             <a href='' class="btn btn-success btn-sm">View</a>
-                            <a href='{{ url('articles/' . $item->slug . '/edit') }}' class="btn btn-warning btn-sm">Edit</a>
+
+                                
+                            <a href='{{ url('articles/' . $item->slug . '/edit') }}'
+                                class="btn btn-warning btn-sm">Edit</a>
+
                             <form onsubmit="return confirm('Are you sure to delete this data?')" class='d-inline'
                                 action="{{ url('articles/' . $item->slug) }}" method="post">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" name="submit" class="btn btn-danger btn-sm">Del</button>
                             </form>
+
+
                         </td>
                     </tr>
                     <?php $i++; ?>

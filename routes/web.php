@@ -44,6 +44,37 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('users', UserController::class);
     });
 
+    Route::middleware(['can:viewAny,App\User,App\Role'])->group(function () {
+        Route::resource('roles', RoleController::class);
+        Route::get('/roles/manage', [RoleController::class, 'manage'])->name('roles.manage');
+        Route::post('roles/assignRole', [RoleController::class, 'assignRole'])->name('role.assign');
+        Route::delete('/remove-role/{user_name}/{role_name}', [RoleController::class, 'removeRole'])->name('remove.role');
+        Route::post('/roles/givePermission', [RoleController::class, 'givePermission'])->name('roles.givePermission');
+        Route::delete('/roles/{role}/revoke-permission/{permission}', [RoleController::class, 'revokePermission'])->name('roles.permissions.revoke');
+    });
+
+    Route::middleware(['can:viewAny,App\User,App\Permission'])->group(function () {
+        Route::resource('permissions', PermissionController::class);
+    });
+
+    // Route::middleware(['can:viewAny,App\User,App\Article'])->group(function () {
+    //     Route::resource('articles', ArticleController::class);
+    // });
+
+    
+
+
+    // Menambahkan middleware 'can' untuk mengatur izin akses pada artikel
+    // Route::middleware('can:update,article')->group(function () {
+    //     route::get('articles/{article}/edit', [ArticleController::class, 'edit'])->name('articles.edit');
+    //     route::put('articles/{article}', [ArticleController::class, 'update'])->name('articles.update');
+    // });
+
+    // // Menambahkan middleware 'can' untuk mengatur izin akses pada penghapusan artikel
+    // Route::middleware('can:delete,article')->group(function () {
+    //     route::delete('articles/{article}', [ArticleController::class, 'destroy'])->name('articles.destroy');
+    // });
+
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

@@ -17,9 +17,11 @@
                         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                             {{ __('Dashboard') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
-                            {{ __('Users') }}
-                        </x-nav-link>
+                        @can('Manage User', Auth::user())
+                            <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                                {{ __('Users') }}
+                            </x-nav-link>
+                        @endcan
                         <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
                             {{ __('Categories') }}
                         </x-nav-link>
@@ -29,12 +31,16 @@
                         <x-nav-link :href="route('articles.index')" :active="request()->routeIs('articles.*')">
                             {{ __('Articles') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('roles.index')" :active="request()->routeIs('roles.*')">
-                            {{ __('Roles') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('permissions.index')" :active="request()->routeIs('permissions.*')">
-                            {{ __('Permissions') }}
-                        </x-nav-link>
+                        @can('Manage Role', Auth::user())
+                            <x-nav-link :href="route('roles.index')" :active="request()->routeIs('roles.*')">
+                                {{ __('Roles') }}
+                            </x-nav-link>
+                        @endcan
+                        @can('Manage Permission', Auth::user())
+                            <x-nav-link :href="route('permissions.index')" :active="request()->routeIs('permissions.*')">
+                                {{ __('Permissions') }}
+                            </x-nav-link>
+                        @endcan
 
                     @endauth
                 </div>

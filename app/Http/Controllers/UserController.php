@@ -53,7 +53,7 @@ class UserController extends Controller
                 ->orWhere('phone', 'like', "%$keywords%");
 
             // Tambahkan juga pencarian berdasarkan role
-            $data->orWhereHas('roles', function ($query) use ($keywords) {
+                $data->orWhereHas('roles', function ($query) use ($keywords) {
                 $query->where('name', 'like', "%$keywords%");
             });
         } else {
