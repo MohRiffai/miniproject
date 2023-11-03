@@ -8,47 +8,174 @@ use App\Models\Tag;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 use \Cviebrock\EloquentSluggable\Services\SlugService;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class ArticleController extends Controller
 {
-    public function index(Request $request, Article $article)
+    // public function index(Request $request, Article $article)
+    // {
+    //     $keywords = $request->keywords;
+    //     $inline = 10;
+    //     $user = Auth::user();
+    //     $data = Article::query()->with('author');
+    //     if (strlen($keywords)) {
+    //         $data = article::where('id', 'like', "%$keywords%")
+    //             ->orWhere('tittle', 'like', "%$keywords%")
+    //             ->orWhere('category_name', 'like', "%$keywords%")
+    //             ->orWhere('slug', 'like', "%$keywords%")
+    //             ->orWhere('tag_name', 'like', "%$keywords%")
+    //             ->orWhereHas('author', function ($query) use ($keywords) {
+    //                 $query->where('name', 'like', "%$keywords%");
+    //             });
+    //         // ->paginate($inline);
+    //     } else {
+    //         $data = article::orderBy('id', 'desc');
+    //     }
+
+    //     $data = $data->paginate($inline);
+
+    //     return view('articles.index', [
+    //         'article' => $article,
+    //         'userRole' => Auth::user()->role,
+    //         'tags' => Tag::all(),
+    //         'data' => $data,
+    //     ]);
+    // }
+
+    //     public function index(Request $request)
+    // {
+    //     $keywords = $request->keywords;
+    //     $inline = 10;
+
+    //     // Dapatkan pengguna saat ini
+    //     $user = auth()->user();
+
+    //     $data = Article::query()->with('author');
+
+    //     if (strlen($keywords)) {
+    //         $data = $data->where(function ($query) use ($keywords, $user) {
+    //             $query->where('id', 'like', "%$keywords%")
+    //                 ->orWhere('title', 'like', "%$keywords%") // Perbaikan: 'title' bukan 'tittle'
+    //                 ->orWhere('category_name', 'like', "%$keywords%")
+    //                 ->orWhere('slug', 'like', "%$keywords%")
+    //                 ->orWhere('tag_name', 'like', "%$keywords%")
+    //                 ->orWhereHas('author', function ($query) use ($keywords) {
+    //                     $query->where('name', 'like', "%$keywords%");
+    //                 });
+
+    //             if ($user->hasRole('Admin')) {
+    //                 // Jika pengguna adalah admin, tidak ada filter
+    //             } elseif ($user->hasRole('Editor')) {
+    //                 // Jika pengguna adalah editor, editor bisa melihat postingannya sendiri dan postingan lainnya kecuali admin
+    //                 $query->where(function ($subQuery) use ($user) {
+    //                     $subQuery->where('author_id', $user->id)->orWhere('author.role_id', '!=', 1); // 1 adalah ID untuk Admin
+    //                 });
+    //             } else {
+    //                 // Pengguna lainnya hanya bisa melihat artikel yang mereka buat
+    //                 $query->where('author_id', $user->id);
+    //             }
+    //         });
+    //     } else {
+    //         if (!$user->hasRole('Admin')) {
+    //             if ($user->hasRole('Editor')) {
+    //                 // Jika pengguna adalah editor, editor bisa melihat postingannya sendiri dan postingan lainnya kecuali admin
+    //                 $data = $data->where(function ($subQuery) use ($user) {
+    //                     $subQuery->where('author_id', $user->id)->orWhere(function ($innerSubQuery) {
+    //                         $innerSubQuery->where('role_id', '!=', 1); // 1 adalah ID untuk Admin
+    //                     });
+    //                 });
+    //             } else {
+    //                 // Pengguna lainnya hanya bisa melihat artikel yang mereka buat
+    //                 $data = $data->where('author_id', $user->id);
+    //             }
+    //         }
+    //         $data = $data->orderBy('id', 'desc');
+    //     }
+
+    //     $data = $data->paginate($inline);
+
+    //     return view('articles.index', [
+    //         'tags' => Tag::all(),
+    //         'data' => $data,
+    //     ]);
+    // }
+
+    public function index(Request $request)
     {
-        // $this->authorize('admin');
         $keywords = $request->keywords;
         $inline = 10;
+
+        // Dapatkan pengguna saat ini
+        $user = auth()->user();
+
         $data = Article::query()->with('author');
+
         if (strlen($keywords)) {
-            $data = article::where('id', 'like', "%$keywords%")
-                ->orWhere('tittle', 'like', "%$keywords%")
-                ->orWhere('category_name', 'like', "%$keywords%")
-                ->orWhere('slug', 'like', "%$keywords%")
-                ->orWhere('tag_name', 'like', "%$keywords%")
-                ->orWhereHas('author', function($query) use ($keywords){
-                    $query->where('name', 'like', "%$keywords%");
-                });
-                // ->paginate($inline);
-        } 
-        else {
-            $data = article::orderBy('id', 'desc');
+            $data = $data->where(function ($query) use ($keywords, $user) {
+                $query->where('id', 'like', "%$keywords%")
+                    ->orWhere('tittle', 'like', "%$keywords%")
+                    ->orWhere('category_name', 'like', "%$keywords%")
+                    ->orWhere('slug', 'like', "%$keywords%")
+                    ->orWhere('tag_name', 'like', "%$keywords%")
+                    ->orWhereHas('author', function ($query) use ($keywords, $user) {
+                        $query->where('name', 'like', "%$keywords%");
+                    });
+
+                if ($user->hasRole('Admin')) {
+                    // Jika pengguna adalah admin, tidak ada filter
+                } elseif ($user->hasRole('Editor')) {
+                    // Jika pengguna adalah editor, editor bisa melihat postingannya sendiri dan postingan lainnya kecuali admin
+                    $query->where(function ($subQuery) use ($user) {
+                        $subQuery->where('author_id', $user->id)->orWhere(function ($innerSubQuery) use ($user) {
+                            $innerSubQuery->whereHas('author', function ($authorQuery) use ($user) {
+                                $authorQuery->whereHas('roles', function ($roleQuery) {
+                                    $roleQuery->where('name', '!=', 'Admin');
+                                });
+                            });
+                        });
+                    });
+                } else {
+                    // Pengguna lainnya hanya bisa melihat artikel yang mereka buat
+                    $query->where('author_id', $user->id);
+                }
+            });
+        } else {
+            if (!$user->hasRole('Admin')) {
+                if ($user->hasRole('Editor')) {
+                    // Jika pengguna adalah editor, editor bisa melihat postingannya sendiri dan postingan lainnya kecuali admin
+                    $data = $data->where(function ($subQuery) use ($user) {
+                        $subQuery->where('author_id', $user->id)->orWhere(function ($innerSubQuery) use ($user) {
+                            $innerSubQuery->whereHas('author', function ($authorQuery) use ($user) {
+                                $authorQuery->whereHas('roles', function ($roleQuery) {
+                                    $roleQuery->where('name', '!=', 'Admin');
+                                });
+                            });
+                        });
+                    });
+                } else {
+                    // Pengguna lainnya hanya bisa melihat artikel yang mereka buat
+                    $data = $data->where('author_id', $user->id);
+                }
+            }
+            $data = $data->orderBy('id', 'desc');
         }
 
         $data = $data->paginate($inline);
 
         return view('articles.index', [
-            'article' => $article,
             'tags' => Tag::all(),
             'data' => $data,
         ]);
     }
-
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Article $article)
     {
+        $this->authorize('create', $article);
         return view('articles.create', [
             'categories' => Category::all()
         ], ['tags' => Tag::all()]);
@@ -57,9 +184,9 @@ class ArticleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, Article $article)
     {
-
+        $this->authorize('create', $article);
         $data = $request->validate([
             'tittle' => 'required|max:255',
             'slug' => 'required|unique:articles',
@@ -71,6 +198,7 @@ class ArticleController extends Controller
 
         $data = $request->all();
         $data['author_id'] = auth()->user()->id;
+        $data['role_id'] = auth()->user()->roles->first()->id;
 
         // Mengunggah gambar dan mendapatkan path-nya
         if ($request->file('image')) {
@@ -189,7 +317,7 @@ class ArticleController extends Controller
 
         $this->authorize('delete', $article);
 
-        if ($article->image){
+        if ($article->image) {
             Storage::delete($article->image);
         }
 

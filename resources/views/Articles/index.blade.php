@@ -42,6 +42,10 @@
             <tbody>
                 <?php $i = $data->firstItem(); ?>
                 @foreach ($data as $item)
+                    @if (Auth::user()->hasRole('author') && $item->author_id != Auth::user()->id)
+                        <!-- Jika peran pengguna adalah "author" dan artikel tidak dibuat oleh pengguna saat ini, lewati artikel ini -->
+                        @continue
+                    @endif
                     <tr>
                         <td><?php echo $i; ?></td>
                         <td>{{ $item->tittle }}</td>
@@ -68,9 +72,13 @@
                         <td>
                             <a href='' class="btn btn-success btn-sm">View</a>
 
-                                
                             <a href='{{ url('articles/' . $item->slug . '/edit') }}'
                                 class="btn btn-warning btn-sm">Edit</a>
+
+                            {{-- @can('update', $article)    
+                            <a href='{{ url('articles/' . $item->slug . '/edit') }}' class="btn btn-warning btn-sm">Edit</a>
+                            @endcan --}}
+
 
                             <form onsubmit="return confirm('Are you sure to delete this data?')" class='d-inline'
                                 action="{{ url('articles/' . $item->slug) }}" method="post">
