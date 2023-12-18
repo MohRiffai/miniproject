@@ -7,8 +7,9 @@ use Spatie\Permission\Models\Permission;
 
 class permissionController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, Permission $permission)
     {
+        $this->authorize('viewAny', $permission);
         $keywords = $request->keywords;
         $inline = 10;
         if (strlen($keywords)) {
@@ -25,8 +26,9 @@ class permissionController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Permission $permission)
     {
+        $this->authorize('create', $permission);
         return view(view: 'permissions.create');
     }
 
@@ -58,6 +60,7 @@ class permissionController extends Controller
      */
     public function edit(permission $permission)
     {
+        $this->authorize('update', $permission);
         $data = permission::find($permission->id); // Use $permission->id to access the permission's ID
         return view('permissions.edit')->with('data', $data);
     }
@@ -68,6 +71,7 @@ class permissionController extends Controller
      */
     public function update(Request $request, permission $permission)
     {
+        $this->authorize('update', $permission);
         $request->validate([
             'name' => 'required',
         ]);
@@ -91,6 +95,7 @@ class permissionController extends Controller
 
     public function destroy(permission $permission)
     {
+        $this->authorize('destory', $permission);
         $permission->delete(); // Use the $permission instance to delete the permission.
 
         return redirect()->to('permissions')->with('success', 'Successfully deleted data');

@@ -103,8 +103,9 @@ class ArticleController extends Controller
     //     ]);
     // }
 
-    public function index(Request $request)
+    public function index(Request $request, Article $article)
     {
+        $this->authorize('viewAny', $article);
         $keywords = $request->keywords;
         $inline = 10;
 
@@ -181,6 +182,17 @@ class ArticleController extends Controller
         ], ['tags' => Tag::all()]);
     }
 
+    // public function create(Article $article)
+    // {
+    //     $this->authorize('create', $article);
+    //     return view('articles.create', [
+    //         'categories' => Category::all(),
+    //         'authors' => User::all(),
+    //         'tags' => Tag::all(),
+    //     ]);
+    // }
+
+
     /**
      * Store a newly created resource in storage.
      */
@@ -219,13 +231,51 @@ class ArticleController extends Controller
         article::create($data);
         return redirect()->to('articles')->with('success', 'Successfully added data');
     }
+    // public function store(Request $request, Article $article)
+    // {
+    //     $this->authorize('create', $article);
+    //     $data = $request->validate([
+    //         'tittle' => 'required|max:255',
+    //         'slug' => 'required|unique:articles',
+    //         'category_name' => 'required',
+    //         'image' => 'image|file|max:1024',
+    //         'content' => 'required',
+    //         'tag_name' => 'required|array',
+    //         'author_id' => 'required', // Pastikan menambahkan validasi untuk author_id
+    //     ]);
+
+    //     $data = $request->all();
+    //     $data['author_id'] = auth()->user()->id;
+    //     $data['role_id'] = auth()->user()->roles->first()->id;
+
+    //     // Mengunggah gambar dan mendapatkan path-nya
+    //     if ($request->file('image')) {
+    //         $imagePath = $request->file('image')->store('post-images');
+    //         $data['image'] = $imagePath; // Menyimpan path gambar ke dalam data artikel
+    //     }
+
+    //     $setTagIdAsString = implode(',', $data['tag_name']);
+
+    //     // Modify the 'tag_id' value in the $data array
+    //     $data['tag_name'] = $setTagIdAsString;
+
+    //     // Menambahkan kolom "Author" dengan nama pengguna pengguna yang sedang login
+    //     // $user = Auth::user(); // Mendapatkan pengguna yang sedang login
+    //     // $data['author'] = $user->name; // Mengisi kolom "Author" dengan nama pengguna
+
+    //     article::create($data);
+    //     return redirect()->to('articles')->with('success', 'Successfully added data');
+    // }
 
     /**
      * Display the specified resource.
      */
     public function show(article $article)
     {
-        //
+        $data = Article::find($article->id);
+
+        // Kemudian kembalikan view yang menampilkan detail mahasiswa
+        return view('articles.singlepost');
     }
 
     /**
@@ -244,6 +294,7 @@ class ArticleController extends Controller
             'article' => $article,
             'categories' => Category::all(),
             'tags' => Tag::all(),
+            'authors' => User::all(),
             'selectedTagIds' => $selectedTagIds, // Pass the selected tag IDs to the view
             'data' => $data, // Pass the $data variable to the view
         ]);
@@ -261,6 +312,8 @@ class ArticleController extends Controller
             'image' => 'image|file|max:1024',
             'content' => 'required',
             'tag_name' => 'required|array',
+            // ganti auhtor
+            'author_id' => 'required|exists:users,id', 
         ]);
 
         // $user = auth()->user();
@@ -289,6 +342,8 @@ class ArticleController extends Controller
             'content' => $request->input('content'),
             'tag_name' => $setTagIdAsString,
             'image' => $imagePath,
+            // ganti author
+            'author_id' => $request->input('author_id'),
         ]);
 
         return redirect()->route('articles.index')->with('success', 'Successfully updated data');

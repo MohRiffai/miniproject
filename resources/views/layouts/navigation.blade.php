@@ -22,15 +22,21 @@
                                 {{ __('Users') }}
                             </x-nav-link>
                         @endcan
-                        <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
-                            {{ __('Categories') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('tags.index')" :active="request()->routeIs('tags.*')">
-                            {{ __('Tags') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('articles.index')" :active="request()->routeIs('articles.*')">
-                            {{ __('Articles') }}
-                        </x-nav-link>
+                        @can('Manage Category', Auth::user())
+                            <x-nav-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
+                                {{ __('Categories') }}
+                            </x-nav-link>
+                        @endcan
+                        @can('Manage Tag', Auth::user())
+                            <x-nav-link :href="route('tags.index')" :active="request()->routeIs('tags.*')">
+                                {{ __('Tags') }}
+                            </x-nav-link>
+                        @endcan
+                        @can('Manage Article', Auth::user())
+                            <x-nav-link :href="route('articles.index')" :active="request()->routeIs('articles.*')">
+                                {{ __('Articles') }}
+                            </x-nav-link>
+                        @endcan
                         @can('Manage Role', Auth::user())
                             <x-nav-link :href="route('roles.index')" :active="request()->routeIs('roles.*')">
                                 {{ __('Roles') }}
@@ -91,9 +97,9 @@
                         <x-nav-link :href="route('login')" :active="request()->routeIs('login')">
                             {{ __('Login') }}
                         </x-nav-link>
-                        <x-nav-link :href="route('register')" :active="request()->routeIs('register')">
+                        {{-- <x-nav-link :href="route('register')" :active="request()->routeIs('register')">
                             {{ __('Register') }}
-                        </x-nav-link>
+                        </x-nav-link> --}}
                     </div>
                 </div>
 
@@ -153,9 +159,9 @@
                         {{ __('Login') }}
                     </x-responsive-nav-link>
 
-                    <x-responsive-nav-link :href="route('register')">
+                    {{-- <x-responsive-nav-link :href="route('register')">
                         {{ __('Register') }}
-                    </x-responsive-nav-link>
+                    </x-responsive-nav-link> --}}
                 </div>
             @endauth
         </div>

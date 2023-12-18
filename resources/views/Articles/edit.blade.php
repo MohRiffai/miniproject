@@ -51,10 +51,27 @@
                                 @enderror
                             </div>
                         </div>
+                        {{-- <div class="mb-3 row">
+                            <label for="author" class="col-sm-2 col-form-label">Author</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" name="author" id="author" value="{{ $data->author->name }} ({{ $article->author->roles->first()->name }})">
+                            </div>
+                        </div> --}}
                         <div class="mb-3 row">
                             <label for="author" class="col-sm-2 col-form-label">Author</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" name="author" id="author" value="{{ $data->author->name }} ({{ $article->author->roles->first()->name }})"   readonly>
+                                <select class="form-control" name="author_id" id="author_id">
+                                    @foreach ($authors as $author)
+                                        <option value="{{ $author->id }}" {{ $author->id == $data->author_id ? 'selected' : '' }}>
+                                            {{ $author->name }}
+                                            @if ($author->roles->isNotEmpty())
+                                                ({{ $author->roles->pluck('name')->implode(', ') }})
+                                            @else
+                                                {{ __('(Belum Mempunyai Role)') }}
+                                            @endif
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
                         </div>
                         <div class="mb-3 row">
@@ -75,7 +92,8 @@
                         <div class="mb-3 row">
                             <label for="image" class="col-sm-2 col-form-label">Post Image</label>
                             <div class="col-sm-10">
-                                <input class="form-control @error('image') is-invalid @enderror" type="file" id="image" name="image">
+                                <input class="form-control @error('image') is-invalid @enderror" type="file"
+                                    id="image" name="image">
                                 @error('image')
                                     <div class="invalid-feedback">
                                         {{ $message }}
@@ -120,7 +138,7 @@
                             <label for="tag" class="col-sm-2 col-form-label">Tags</label>
                             <div class="col-sm-10">
                                 <select class="form-select @error('tag_name') is-invalid @enderror" name="tag_name[]"
-                                    multiple="multiple" id="tag_name"> 
+                                    multiple="multiple" id="tag_name">
                                     @foreach ($tags as $tag)
                                         <option value="{{ $tag->name }}"
                                             @if (in_array($tag->name, old('tag_name', $selectedTagIds))) selected @endif>
@@ -138,8 +156,7 @@
 
                         <div class="mb-3 row">
                             <label for="save" class="col-sm-2 col-form-label"></label>
-                            <div class="col-sm-10"><button type="submit" class="btn btn-primary" name="submit">Edit
-                                    Post</button>
+                            <div class="col-sm-10"><button type="submit" class="btn btn-primary" name="submit">Edit Post</button>
                             </div>
                         </div>
                 </form>
@@ -160,6 +177,19 @@
                     e.preventDefault();
                 })
             </script>
+
+            {{-- Script  javascript untuk menonaktifkan dropdown pada Author, apabila user punya role Author dia tidak bisa edit nama Author --}}
+            <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    var userRole = "{{ auth()->user()->getRoleNames()->first() }}";
+                    var authorDropdown = document.getElementById('author_id');
+            
+                    if (userRole === 'Author') {
+                        authorDropdown.disabled = true;
+                    }
+                });
+            </script>
+
             <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"
                 integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA=="
                 crossorigin="anonymous" referrerpolicy="no-referrer"></script>

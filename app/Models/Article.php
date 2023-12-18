@@ -48,4 +48,10 @@ class Article extends Model
             ]
         ];
     }
+
+    // Di dalam model Article atau model yang sesuai
+    public function getExcerpt($length = 200)
+    {
+        return substr($this->content, 0, $length);
+    }
 }

@@ -7,8 +7,9 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, Category $category)
     {
+        $this->authorize('viewAny', $category);
         $keywords = $request->keywords;
         $inline = 3;
         if (strlen($keywords)) {
@@ -25,8 +26,9 @@ class CategoryController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Category $category)
     {
+        $this->authorize('create', $category);
         return view(view: 'categories.create');
     }
 
@@ -58,8 +60,9 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(category $category)
+    public function edit(Category $category)
     {
+        $this->authorize('update', $category);
         $data = category::find($category->id); // Use $category->id to access the category's ID
         return view('categories.edit')->with('data', $data);
     }
@@ -70,6 +73,7 @@ class CategoryController extends Controller
      */
     public function update(Request $request, category $category)
     {
+        $this->authorize('update', $category);
         $request->validate([
             'name' => 'required',
             'description' => 'required', // You can add email validation here
@@ -90,6 +94,7 @@ class CategoryController extends Controller
 
     public function destroy(category $category)
     {
+        $this->authorize('destroy', $category);
         $category->delete(); // Use the $category instance to delete the category.
 
         return redirect()->to('categories')->with('success', 'Successfully deleted data');

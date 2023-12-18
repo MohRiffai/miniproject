@@ -6,14 +6,14 @@ use Spatie\Permission\Models\Permission;
 use App\Models\User;
 use Illuminate\Auth\Access\Response;
 
-class PemissionPolicy
+class PermissionPolicy
 {
     /**
      * Determine whether the user can view any models.
      */
     public function viewAny(User $user, Permission $permission): bool
     {
-        return $user->hasRole('Admin') && $user->can('Manage Permission');
+        return $user->hasAnyRole(['Admin','Editor']) && $user->can('Manage Permission');
     }
 
     /**
@@ -21,7 +21,7 @@ class PemissionPolicy
      */
     public function view(User $user, Permission $permission): bool
     {
-        return $user->hasRole('Admin') && $user->can('Manage Permission');
+        return $user->hasAnyRole(['Admin','Editor']) && $user->can('Manage Permission');
     }
 
     /**
@@ -29,7 +29,7 @@ class PemissionPolicy
      */
     public function create(User $user, Permission $permission): bool
     {
-        return $user->hasRole('Admin') && $user->can('Manage Permission');
+        return $user->hasAnyRole(['Admin','Editor']) && $user->can('Manage Permission');
     }
 
     /**
@@ -37,7 +37,7 @@ class PemissionPolicy
      */
     public function update(User $user, Permission $permission): bool
     {
-        return $user->hasRole('Admin') && $user->can('Manage Permission');
+        return $user->hasAnyRole(['Admin','Editor']) && $user->can('Manage Permission');
     }
 
     /**
@@ -45,7 +45,7 @@ class PemissionPolicy
      */
     public function delete(User $user, Permission $permission): bool
     {
-        return $user->hasRole('Admin') && $user->can('Manage Permission');
+        return $user->hasAnyRole(['Admin','Editor']) && $user->can('Manage Permission');
     }
 
     /**
@@ -53,7 +53,7 @@ class PemissionPolicy
      */
     public function restore(User $user, Permission $permission): bool
     {
-        return $user->hasRole('Admin') && $user->can('Manage Permission');
+        return $user->hasAnyRole(['Admin','Editor']) && $user->can('Manage Permission');
     }
 
     /**
@@ -61,6 +61,6 @@ class PemissionPolicy
      */
     public function forceDelete(User $user, Permission $permission): bool
     {
-        return $user->hasRole('Admin') && $user->can('Manage Permission');
+        return $user->hasAnyRole(['Admin','Editor']) && $user->can('Manage Permission');
     }
 }

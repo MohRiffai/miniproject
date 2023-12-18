@@ -1,10 +1,15 @@
 <?php
 
+use App\Http\Controllers\AuthorpostController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TagController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\SinglepostController;
+use App\Http\Controllers\CategorypostController;
+use App\Http\Controllers\TagpostController;
+use App\Http\Controllers\SearchpostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
@@ -23,6 +28,11 @@ use App\Http\Controllers\PermissionController;
 */
 
 route::get(uri: '/', action: \App\Http\Controllers\HomeController::class)->name(name: 'home');
+Route::get('/category/{category}', [CategorypostController::class, 'index'])->name('category.show');
+Route::get('/author/{author}', [AuthorpostController::class, 'index'])->name('author.show');
+Route::get('/tag/{tag}', [TagpostController::class, 'index'])->name('tagpost');
+Route::get('/post/{slug}', [SinglepostController::class, 'index'])->name('singlepost.index');
+Route::get('/search', [SearchpostController::class, 'search'])->name('search');
 // route ::get(uri: 'articles', action: [\App\Http\Controllers\ArticleController::class, 'index'])->name(name:'articles.index');
 route::get('/articles/article/checkSlug', [ArticleController::class, 'checkSlug']);
 
@@ -44,18 +54,26 @@ Route::middleware(['auth'])->group(function () {
         Route::resource('users', UserController::class);
     });
 
-    Route::middleware(['can:viewAny,App\User,App\Role'])->group(function () {
-        Route::resource('roles', RoleController::class);
-        Route::get('/roles/manage', [RoleController::class, 'manage'])->name('roles.manage');
-        Route::post('roles/assignRole', [RoleController::class, 'assignRole'])->name('role.assign');
-        Route::delete('/remove-role/{user_name}/{role_name}', [RoleController::class, 'removeRole'])->name('remove.role');
-        Route::post('/roles/givePermission', [RoleController::class, 'givePermission'])->name('roles.givePermission');
-        Route::delete('/roles/{role}/revoke-permission/{permission}', [RoleController::class, 'revokePermission'])->name('roles.permissions.revoke');
-    });
+    // Route::middleware(['can:viewAny,App\User,App\Role'])->group(function () {
+    //     Route::resource('roles', RoleController::class);
+    //     Route::get('/roles/manage', [RoleController::class, 'manage'])->name('roles.manage');
+    //     Route::post('roles/assignRole', [RoleController::class, 'assignRole'])->name('role.assign');
+    //     Route::delete('/remove-role/{user_name}/{role_name}', [RoleController::class, 'removeRole'])->name('remove.role');
+    //     Route::post('/roles/givePermission', [RoleController::class, 'givePermission'])->name('roles.givePermission');
+    //     Route::delete('/roles/{role}/revoke-permission/{permission}', [RoleController::class, 'revokePermission'])->name('roles.permissions.revoke');
+    // });
 
-    Route::middleware(['can:viewAny,App\User,App\Permission'])->group(function () {
-        Route::resource('permissions', PermissionController::class);
-    });
+    // Route::middleware(['can:viewAny,App\User,App\Permission'])->group(function () {
+    //     Route::resource('permissions', PermissionController::class);
+    // });
+
+    // Route::middleware(['can:viewAny,App\User,App\Category'])->group(function () {
+    //     Route::resource('categories', CategoryController::class);
+    // });
+
+    // Route::middleware(['can:viewAny,App\User,App\Tag'])->group(function () {
+    //     Route::resource('tags', TagController::class);
+    // });
 
     // Route::middleware(['can:viewAny,App\User,App\Article'])->group(function () {
     //     Route::resource('articles', ArticleController::class);

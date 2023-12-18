@@ -93,7 +93,6 @@
                         <table class="table">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
                                     <th>Name</th>
                                     <th>Guard Name</th>
                                     <th>Action</th>
@@ -102,19 +101,23 @@
                             <tbody>
                                 @foreach ($data as $role)
                                     <tr>
-                                        <td>{{ $role->id }}</td>
-                                        <td>{{ $role->name }}</td>
-                                        <td>{{ $role->guard_name }}</td>
+                                        @if (Auth::user()->hasRole('Admin') || $role->name !== 'Admin')
+                                            <td>{{ $role->name }}</td>
+                                            <td>{{ $role->guard_name }}</td>
+                                        @endif
                                         <td>
-                                            <a href='{{ url('roles/' . $role->id . '/edit') }}'
-                                                class="btn btn-warning btn-sm">Edit</a>
-                                            <form onsubmit="return confirm('Are you sure to delete this data?')"
-                                                class='d-inline' action="{{ url('roles/' . $role->id) }}" method="post">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" name="submit"
-                                                    class="btn btn-danger btn-sm">Del</button>
-                                            </form>
+                                            @if (Auth::user()->hasRole('Admin') || $role->name !== 'Admin')
+                                                <a href='{{ url('roles/' . $role->id . '/edit') }}'
+                                                    class="btn btn-warning btn-sm">Edit</a>
+                                                <form onsubmit="return confirm('Are you sure to delete this data?')"
+                                                    class='d-inline' action="{{ url('roles/' . $role->id) }}"
+                                                    method="post">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" name="submit"
+                                                        class="btn btn-danger btn-sm">Del</button>
+                                                </form>
+                                            @endif
                                         </td>
                                     </tr>
                                 @endforeach

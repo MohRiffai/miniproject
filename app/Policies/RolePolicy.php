@@ -13,7 +13,7 @@ class RolePolicy
      */
     public function viewAny(User $user, Role $role): bool
     {
-        return $user->hasRole('Admin') && $user->can('Manage Role');
+        return $user->hasAnyRole(['Admin','Editor']) && $user->can('Manage Role');
     }
 
     /**
@@ -21,7 +21,7 @@ class RolePolicy
      */
     public function view(User $user, Role $role): bool
     {
-        return $user->hasRole('Admin');
+        return $user->hasAnyRole(['Admin','Editor']) && $user->can('Manage Role');
     }
 
     /**
@@ -29,7 +29,7 @@ class RolePolicy
      */
     public function create(User $user, Role $role): bool
     {
-        return $user->hasRole('Admin');
+        return $user->hasAnyRole(['Admin','Editor']) && $user->can('Manage Role');
     }
 
     /**
@@ -37,7 +37,7 @@ class RolePolicy
      */
     public function update(User $user, Role $role): bool
     {
-        return $user->hasRole('Admin');
+        return $user->hasAnyRole(['Admin','Editor']) && $user->can('Manage Role');
     }
 
     /**
@@ -45,7 +45,7 @@ class RolePolicy
      */
     public function delete(User $user, Role $role): bool
     {
-        return $user->hasRole('Admin');
+        return $user->hasAnyRole(['Admin','Editor']) && $user->can('Manage Role');
     }
 
     /**
@@ -53,7 +53,7 @@ class RolePolicy
      */
     public function restore(User $user, Role $role): bool
     {
-        return $user->hasRole('Admin');
+        return $user->hasAnyRole(['Admin','Editor']) && $user->can('Manage Role');
     }
 
     /**
@@ -61,6 +61,6 @@ class RolePolicy
      */
     public function forceDelete(User $user, Role $role): bool
     {
-        return $user->hasRole('Admin');
+        return $user->hasAnyRole(['Admin','Editor']) && $user->can('Manage Role');
     }
 }

@@ -21,15 +21,27 @@
                                         <label for="model_id">Select User:</label>
                                         <select class="form-control" name="model_id" id="model_id">
                                             @foreach ($models as $model)
+                                            @if (Auth::user()->hasRole('Admin') || $model->name !== 'Admin')
                                                 <option value="{{ $model->id }}">{{ $model->name }}</option>
+                                            @endif
                                             @endforeach
                                         </select>
                                     </div>
-                                    <div class="form-group mt-3">
+                                    {{-- <div class="form-group mt-3">
                                         <label for="role_id">Select Role:</label>
                                         <select class="form-control" name="role_id" id="role_id">
                                             @foreach ($roles as $role)
                                                 <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div> --}}
+                                    <div class="form-group mt-3">
+                                        <label for="role_id">Select Role:</label>
+                                        <select class="form-control" name="role_id" id="role_id">
+                                            @foreach ($roles as $role)
+                                                @if (Auth::user()->hasRole('Admin') || $role->name !== 'Admin')
+                                                    <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                                @endif
                                             @endforeach
                                         </select>
                                     </div>
@@ -42,19 +54,21 @@
 
                                     <ul class="list-inline">
                                         @foreach ($modelHasRoles as $modelHasRole)
-                                            <li class="list-inline-item">
-                                                <form
-                                                    onsubmit="return confirm('Are you sure to revoke this role from the user?')"
-                                                    class="d-inline"
-                                                    action="{{ route('remove.role', ['user_name' => $modelHasRole->user_name, 'role_name' => $modelHasRole->role_name]) }}"
-                                                    method="post">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="btn btn-danger btn-sm mt-3"
-                                                        style="background-color: red; color: white; border: none; border-radius: 5px; padding: 5px 10px;">{{ $modelHasRole->user_name }}
-                                                        => {{ $modelHasRole->role_name }}</button>
-                                                </form>
-                                            </li>
+                                            @if (Auth::user()->hasRole('Admin') || $modelHasRole->role_name !== 'Admin')
+                                                <li class="list-inline-item">
+                                                    <form
+                                                        onsubmit="return confirm('Are you sure to revoke this role from the user?')"
+                                                        class="d-inline"
+                                                        action="{{ route('remove.role', ['user_name' => $modelHasRole->user_name, 'role_name' => $modelHasRole->role_name]) }}"
+                                                        method="post">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit" class="btn btn-danger btn-sm mt-3"
+                                                            style="background-color: red; color: white; border: none; border-radius: 5px; padding: 5px 10px;">{{ $modelHasRole->user_name }}
+                                                            => {{ $modelHasRole->role_name }}</button>
+                                                    </form>
+                                                </li>
+                                            @endif
                                         @endforeach
                                     </ul>
                                 </div>
@@ -73,7 +87,9 @@
                                         <label for="role_id">Select Role:</label>
                                         <select class="form-control" name="role_id" id="role_id">
                                             @foreach ($roles as $role)
-                                                <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                                @if (Auth::user()->hasRole('Admin') || $role->name !== 'Admin')
+                                                    <option value="{{ $role->id }}">{{ $role->name }}</option>
+                                                @endif
                                             @endforeach
                                         </select>
                                     </div>
@@ -107,32 +123,34 @@
                                         </thead>
                                         <tbody>
                                             @foreach ($sortedRoleHasPermissions as $roleHasPermission)
-                                                @if ($currentRole !== $roleHasPermission->role_name)
-                                                    @php
-                                                        $currentRole = $roleHasPermission->role_name;
-                                                    @endphp
+                                                @if (Auth::user()->hasRole('Admin') || $roleHasPermission->role_name !== 'Admin')
+                                                    @if ($currentRole !== $roleHasPermission->role_name)
+                                                        @php
+                                                            $currentRole = $roleHasPermission->role_name;
+                                                        @endphp
+                                                        <tr>
+                                                            <td colspan="3">
+                                                                <strong>{{ $roleHasPermission->role_name }}</strong>
+                                                            </td>
+                                                        </tr>
+                                                    @endif
                                                     <tr>
-                                                        <td colspan="3">
-                                                            <strong>{{ $roleHasPermission->role_name }}</strong>
+                                                        <td></td>
+                                                        <td>{{ $roleHasPermission->permission_name }}</td>
+                                                        <td>
+                                                            <form
+                                                                onsubmit="return confirm('Are you sure to revoke this permission from the role?')"
+                                                                class="d-inline"
+                                                                action="{{ route('roles.permissions.revoke', [$roleHasPermission->role_name, $roleHasPermission->permission_name]) }}"
+                                                                method="post">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="btn btn-danger btn-sm"
+                                                                    style="background-color: red; color: white; border: none; border-radius: 5px; padding: 5px 10px;">Detach</button>
+                                                            </form>
                                                         </td>
                                                     </tr>
                                                 @endif
-                                                <tr>
-                                                    <td></td>
-                                                    <td>{{ $roleHasPermission->permission_name }}</td>
-                                                    <td>
-                                                        <form
-                                                            onsubmit="return confirm('Are you sure to revoke this permission from the role?')"
-                                                            class="d-inline"
-                                                            action="{{ route('roles.permissions.revoke', [$roleHasPermission->role_name, $roleHasPermission->permission_name]) }}"
-                                                            method="post">
-                                                            @csrf
-                                                            @method('DELETE')
-                                                            <button type="submit" class="btn btn-danger btn-sm"
-                                                                style="background-color: red; color: white; border: none; border-radius: 5px; padding: 5px 10px;">Detach</button>
-                                                        </form>
-                                                    </td>
-                                                </tr>
                                             @endforeach
                                         </tbody>
                                     </table>

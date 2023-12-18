@@ -8,6 +8,11 @@ use Illuminate\Auth\Access\Response;
 
 class ArticlePolicy
 {
+    public function viewAny(User $user, Article $article)
+    {
+        return $user->hasAnyRole(['Admin', 'Editor', 'Author']) && $user->can('Manage Article');
+    }
+    
     public function create(User $user, Article $article)
     {
         if ($user->hasRole('Admin') || $user->hasRole('Editor') || $user->hasRole('Author')) {

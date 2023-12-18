@@ -10,8 +10,9 @@ class TagController extends Controller
      /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index(Request $request, Tag $tag)
     {
+        $this->authorize('viewAny', $tag);
         $keywords = $request->keywords;
         $inline = 3;
         if (strlen($keywords)) {
@@ -28,8 +29,9 @@ class TagController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Tag $tag)
     {
+        $this->authorize('create', $tag);
         return view(view: 'tags.create');
     }
 
@@ -70,6 +72,7 @@ class TagController extends Controller
      */
     public function update(Request $request, tag $tag)
     {
+        $this->authorize('update', $tag);
         $request->validate([
             'name' => 'required',
             'description' => 'required',
@@ -91,6 +94,7 @@ class TagController extends Controller
 
     public function destroy(tag $tag)
     {
+        $this->authorize('destroy', $tag);
         $tag->delete(); // Use the $tag instance to delete the tag.
 
         return redirect()->to('tags')->with('success', 'Successfully deleted data');

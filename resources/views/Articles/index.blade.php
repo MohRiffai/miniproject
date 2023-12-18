@@ -70,7 +70,7 @@
                                 style="max-width: 200px; max-height: 200px;">
                         </td>
                         <td>
-                            <a href='' class="btn btn-success btn-sm">View</a>
+                            <a href='{{ route('singlepost.index', $item->slug) }}' class="btn btn-success btn-sm">View</a>
 
                             <a href='{{ url('articles/' . $item->slug . '/edit') }}'
                                 class="btn btn-warning btn-sm">Edit</a>

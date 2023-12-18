@@ -11,8 +11,9 @@ use Illuminate\Support\Facades\DB;
 
 class RoleController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, Role $role)
     {
+        $this->authorize('viewAny', $role);
         $keywords = $request->keywords;
         $inline = 3;
         if (strlen($keywords)) {
@@ -21,7 +22,7 @@ class RoleController extends Controller
                 ->orWhere('guard_name', 'like', "%$keywords%")
                 ->paginate($inline);
         } else {
-            $data = role::orderBy('id', 'desc')->paginate($inline);
+            $data = role::orderBy('id', 'asc')->paginate($inline);
         }
         return view(view: 'roles.index')->with('data', $data);
     }
@@ -29,8 +30,9 @@ class RoleController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Role $role)
     {
+        $this->authorize('create', $role);
         return view(view: 'roles.create');
     }
 
@@ -62,6 +64,7 @@ class RoleController extends Controller
      */
     public function edit(Role $role)
     {
+        $this->authorize('update', $role);
         $data = role::find($role->id); // Use $role->id to access the role's ID
         return view('roles.edit', [
             'permissions' => Permission::all(),
@@ -74,6 +77,7 @@ class RoleController extends Controller
      */
     public function update(Request $request, Role $role)
     {
+        $this->authorize('update', $role);
         $request->validate([
             'name' => 'required',
         ]);
@@ -97,6 +101,7 @@ class RoleController extends Controller
 
     public function destroy(Role $role)
     {
+        $this->authorize('destory', $role);
         $role->delete(); // Use the $role instance to delete the role.
 
         return redirect()->to('roles')->with('success', 'Successfully deleted data');
@@ -104,6 +109,7 @@ class RoleController extends Controller
 
     public function manage(Role $role)
     {
+        $this->authorize('viewAny', $role);
         $models = User::all();
         $roles = Role::all();
         $permissions = Permission::all();
