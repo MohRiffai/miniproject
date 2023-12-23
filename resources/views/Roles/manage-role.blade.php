@@ -6,7 +6,7 @@
 <!-- START DATA -->
 @extends('layouts.templatecss')
 @section('content')
-    <a href=" {{ url()->previous() }}" class="my-3 btn btn-secondary">
+    <a href="{{ url('roles') }}" class="my-3 btn btn-secondary">
         << Back</a>
             <div class="container">
                 <div class="row">
@@ -21,9 +21,9 @@
                                         <label for="model_id">Select User:</label>
                                         <select class="form-control" name="model_id" id="model_id">
                                             @foreach ($models as $model)
-                                            @if (Auth::user()->hasRole('Admin') || $model->name !== 'Admin')
-                                                <option value="{{ $model->id }}">{{ $model->name }}</option>
-                                            @endif
+                                                @if (Auth::user()->hasRole('Admin') || !$model->hasRole('Admin'))
+                                                    <option value="{{ $model->id }}">{{ $model->name }}</option>
+                                                @endif
                                             @endforeach
                                         </select>
                                     </div>

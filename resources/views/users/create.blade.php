@@ -55,6 +55,6 @@
                 </div>
             </div>
     </form>
-    <</div>
+    </div>
     <!-- AKHIR FORM -->
 @endsection

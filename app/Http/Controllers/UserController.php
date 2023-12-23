@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
@@ -39,42 +40,95 @@ class UserController extends Controller
     //     ]);
     // }
 
+    // public function index(Request $request)
+    // {
+    //     $keywords = $request->keywords;
+    //     $inline = 5;
+
+    //     $data = User::query();
+
+    //     if (strlen($keywords)) {
+    //         $data->where('id', 'like', "%$keywords%")
+    //             ->orWhere('name', 'like', "%$keywords%")
+    //             ->orWhere('email', 'like', "%$keywords%")
+    //             ->orWhere('phone', 'like', "%$keywords%");
+
+    //         // Tambahkan juga pencarian berdasarkan role
+    //             $data->orWhereHas('roles', function ($query) use ($keywords) {
+    //             $query->where('name', 'like', "%$keywords%");
+    //         });
+    //     } else {
+    //         $data = user::orderBy('id', 'desc');
+    //     }
+
+    //     $data = $data->paginate($inline);
+
+    //     $modelHasRoles = DB::table('model_has_roles')
+    //         ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+    //         ->join('users', 'model_has_roles.model_id', '=', 'users.id')
+    //         ->select('users.name as user_name', 'roles.name as role_name')
+    //         ->where('model_has_roles.model_type', 'App\Models\User')
+    //         ->get();
+
+    //     return view('users.index', [
+    //         'roles' => Role::all(),
+    //         'modelHasRoles' => $modelHasRoles,
+    //         'data' => $data
+    //     ]);
+    // }
+
     public function index(Request $request)
     {
         $keywords = $request->keywords;
+        $roleFilter = $request->role; // Filter berdasarkan peran
+
         $inline = 5;
+
+        $currentUser = Auth::user(); // Mendapatkan pengguna saat ini
 
         $data = User::query();
 
-        if (strlen($keywords)) {
-            $data->where('id', 'like', "%$keywords%")
-                ->orWhere('name', 'like', "%$keywords%")
-                ->orWhere('email', 'like', "%$keywords%")
-                ->orWhere('phone', 'like', "%$keywords%");
-
-            // Tambahkan juga pencarian berdasarkan role
-                $data->orWhereHas('roles', function ($query) use ($keywords) {
-                $query->where('name', 'like', "%$keywords%");
+        if (!$currentUser->hasRole('Admin')) {
+            // Jika pengguna bukan admin, filter data yang ditampilkan
+            $data->whereDoesntHave('roles', function ($query) {
+                $query->where('name', 'Admin');
             });
-        } else {
-            $data = user::orderBy('id', 'desc');
         }
 
-        $data = $data->paginate($inline);
+        if (strlen($keywords)) {
+            // Lakukan pencarian berdasarkan kata kunci
+            $data->where(function ($query) use ($keywords) {
+                $query->where('id', 'like', "%$keywords%")
+                    ->orWhere('name', 'like', "%$keywords%")
+                    ->orWhere('email', 'like', "%$keywords%")
+                    ->orWhere('phone', 'like', "%$keywords%")
+                    ->orWhereHas('roles', function ($roleQuery) use ($keywords) {
+                        $roleQuery->where('name', 'like', "%$keywords%");
+                    });
+            });
+        }
 
-        $modelHasRoles = DB::table('model_has_roles')
-            ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
-            ->join('users', 'model_has_roles.model_id', '=', 'users.id')
-            ->select('users.name as user_name', 'roles.name as role_name')
-            ->where('model_has_roles.model_type', 'App\Models\User')
-            ->get();
+        $data = $data->orderBy('id', 'desc')->paginate($inline);
+
+        // Ambil informasi model_has_roles hanya jika pengguna adalah admin
+        $modelHasRoles = [];
+        if ($currentUser->hasRole('admin')) {
+            $modelHasRoles = DB::table('model_has_roles')
+                ->join('roles', 'model_has_roles.role_id', '=', 'roles.id')
+                ->join('users', 'model_has_roles.model_id', '=', 'users.id')
+                ->select('users.name as user_name', 'roles.name as role_name')
+                ->where('model_has_roles.model_type', 'App\Models\User')
+                ->get();
+        }
 
         return view('users.index', [
             'roles' => Role::all(),
+            'data' => $data,
             'modelHasRoles' => $modelHasRoles,
-            'data' => $data
         ]);
     }
+
+
 
     /**
      * Show the form for creating a new resource.
@@ -146,8 +200,7 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'email' => 'required|email', // You can add email validation here
-            // 'password' => 'min:8', // Add password validation rules here
+            'email' => 'required|email', 
             'phone' => 'required',
 
         ]);

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Article; // Pastikan Anda mengganti dengan model yang sesuai
+use App\Models\Article; 
 use Illuminate\Support\Facades\DB;
 
 class SearchpostController extends Controller
